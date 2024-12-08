@@ -10,4 +10,5 @@ export default function router(app) {
     app.use("/properties", listingRouter);
     app.use("/bookings", bookingRouter);
     app.use("/dashboard", dashboardRouter);
+    
 }

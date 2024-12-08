@@ -4,10 +4,13 @@ import { RemoveCircleOutline, AddCircleOutline } from "@mui/icons-material";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { IoIosImages } from "react-icons/io";
 import { IoCloseSharp } from "react-icons/io5";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import MainLayout from "../layouts/MainLayout";
 import { categories, types, facilities } from "../data";
 import { useNavigate } from "react-router-dom";
+const GOONGMAP_API_KEY = process.env.REACT_APP_GOONGMAP_API_KEY;
 
 const CreateListing = () => {
   const [photos, setPhotos] = useState([]);
@@ -30,7 +33,7 @@ const CreateListing = () => {
     description: "",
     highlight: "",
     highlightDetail: "",
-    price: 0,
+    price: '',
   });
   const navigate = useNavigate();
   const creatorId = useSelector((state) => state.user._id);
@@ -38,32 +41,41 @@ const CreateListing = () => {
   const handlePost = async (e) => {
     e.preventDefault();
     try {
-      const listingForm = new FormData();
-      listingForm.append("creator", creatorId);
-      listingForm.append("category", category);
-      listingForm.append("type", type);
-      listingForm.append("streetAddress", formLoaction.streetAddress);
-      listingForm.append("aptSuite", formLoaction.aptSuite);
-      listingForm.append("city", formLoaction.city);
-      listingForm.append("province", formLoaction.province);
-      listingForm.append("country", formLoaction.country);
-      listingForm.append("guestCount", guestCount);
-      listingForm.append("bedroomCount", bedroomCount);
-      listingForm.append("bedCount", bedCount);
-      listingForm.append("bathroomCount", bathroomCount);
-      amenities.forEach((amenity) => listingForm.append("amenities", amenity));
-      listingForm.append("title", formDescription.title);
-      listingForm.append("description", formDescription.description);
-      listingForm.append("highlight", formDescription.highlight);
-      listingForm.append("highlightDetail", formDescription.highlightDetail);
-      listingForm.append("price", formDescription.price);
-      photos.forEach((photo) => listingForm.append("listingPhotos", photo));
+      if(!category) toast.warning("Please select a category");
+      else if(!type) toast.warning("Please select a type");
+      else if(amenities.length < 1) toast.warning("Please select amenities");
+      else if(photos.length < 1) toast.warning("Please upload at least one photo");
+      // else if (formLoaction.price < 1) toast.error("Please enter a valid price");
+      else{
 
-      const response = await fetch("http://localhost:6789/properties/create", {
-        method: "POST",
-        body: listingForm,
-      });
-      if (response.ok) navigate("/");
+        const listingForm = new FormData();
+        listingForm.append("creator", creatorId);
+        listingForm.append("category", category);
+        listingForm.append("type", type);
+        listingForm.append("streetAddress", formLoaction.streetAddress);
+        listingForm.append("aptSuite", formLoaction.aptSuite);
+        listingForm.append("city", formLoaction.city);
+        listingForm.append("province", formLoaction.province);
+        listingForm.append("country", formLoaction.country);
+        listingForm.append("guestCount", guestCount);
+        listingForm.append("bedroomCount", bedroomCount);
+        listingForm.append("bedCount", bedCount);
+        listingForm.append("bathroomCount", bathroomCount);
+        amenities.forEach((amenity) => listingForm.append("amenities", amenity));
+        listingForm.append("title", formDescription.title);
+        listingForm.append("description", formDescription.description);
+        listingForm.append("highlight", formDescription.highlight);
+        listingForm.append("highlightDetail", formDescription.highlightDetail);
+        listingForm.append("price", formDescription.price);
+        photos.forEach((photo) => listingForm.append("listingPhotos", photo));
+  
+        const response = await fetch("http://localhost:6789/properties/create", {
+          method: "POST",
+          body: listingForm,
+        });
+        if (response.ok) navigate("/");
+      }
+
     } catch (error) {
       console.log("Failed to create listing", error.message);
     }
@@ -117,7 +129,7 @@ const CreateListing = () => {
     if (value.length > 2) {
       try {
         const response = await fetch(
-          `https://rsapi.goong.io/Place/AutoComplete?api_key=GwAaPHJeeGrZx2aU8Tf99i1T53EMeePbERr4pTT4&input=${encodeURIComponent(value)}`,
+          `https://rsapi.goong.io/Place/AutoComplete?api_key=${GOONGMAP_API_KEY}&input=${encodeURIComponent(value)}`,
         );
         const data = await response.json();
         setSuggestions(data.predictions);
@@ -132,7 +144,7 @@ const CreateListing = () => {
   const handleSuggestionClick = async (suggestion) => {
     try {
       const response = await fetch(
-        `https://rsapi.goong.io/Place/Detail?api_key=GwAaPHJeeGrZx2aU8Tf99i1T53EMeePbERr4pTT4&place_id=${suggestion.place_id}`,
+        `https://rsapi.goong.io/Place/Detail?api_key=${GOONGMAP_API_KEY}&place_id=${suggestion.place_id}`,
       );
       const data = await response.json();
       const place = data.result;
@@ -182,6 +194,7 @@ const CreateListing = () => {
 
   return (
     <MainLayout>
+      <ToastContainer />
       <div className="bg-gray-300">
         <div className="px-[10vw]">
           <p className="py-[2vw] text-[2vw] font-bold text-blue-900">
@@ -581,6 +594,7 @@ const CreateListing = () => {
                   placeholder="Hilights Details"
                   value={formDescription.highlightDetail}
                   onChange={handleChangeDescription}
+                  required
                 />
 
                 <p className="text-md mb-2 block font-bold text-gray-700">
@@ -602,6 +616,7 @@ const CreateListing = () => {
             </div>
             <button
               type="submit"
+              // disabled={photos.length < 1 || !category || !type || amenities.length < 1} 
               className="mb-[3vw] rounded-lg bg-rose-500 px-4 py-3 font-bold text-white hover:shadow-md hover:shadow-white"
             >
               Create Your Listing

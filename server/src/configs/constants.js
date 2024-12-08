@@ -37,3 +37,7 @@ export const FB_CLIENT_ID = process.env.FB_APP_ID;
 
 
 export const GOONGMAP_API_KEY = process.env.GOONGMAP_API_KEY;
+export const VNPAY_TMNCODE='W7VHJ28M'
+export const VNPAY_HASHSECRET='2BTNURMN0BL0QTMSB9WIC1Z4XGTGPAAD'
+export const VNPAY_URL='https://sandbox.vnpayment.vn/paymentv2/vpcpay.html'
+export const VNPAY_RETURNURL='http://localhost:3000/payment-return'

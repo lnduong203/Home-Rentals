@@ -26,6 +26,10 @@ const bookingSchema = new mongoose.Schema(
             type: Number,
             required: true,
         },
+        isCheckIn: {
+            type: Boolean,
+            default: false,
+        },
     },
     {
         timestamps: true,

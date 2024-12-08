@@ -5,7 +5,6 @@ import { categories } from "../data.js";
 import { setListings } from "../redux/state.js";
 import ListingCard from "./ListingCard.jsx";
 import Loading from "./Loading.jsx";
-// import ListingCard1 from "./ListingCard1.jsx";
 
 const Listings = () => {
   const dispatch = useDispatch();
@@ -34,9 +33,7 @@ const Listings = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory]);
 
-  // if(loading) return <Loading/>
-  // console.log({listings});
-
+ 
   return (
     <div className="bg-gray-100 py-3">
       <div className="my-[1vw] grid grid-cols-5 gap-2 px-[10vw] md:my-[1.5vw] md:grid-cols-8 md:gap-4">
@@ -65,7 +62,6 @@ const Listings = () => {
           ))}
         </div>
       )}
-      {/* <p onClick={() => setShowCard(!showCard)}>{!showCard ? 'Show more' : 'Show less'}</p> */}
     </div>
   );
 };

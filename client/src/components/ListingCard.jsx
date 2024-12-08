@@ -1,16 +1,18 @@
 import { useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { FaMapMarkerAlt, FaCalendarAlt  } from "react-icons/fa";
 import { FaRegHeart, FaHeart } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { setWishList } from "../redux/state";
+import { categories, types } from "../data";
 
 const ListingCard = ({ listing, tripList }) => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
   const wishList = user?.wishList || [];
-  const isLike = wishList?.some((item) => item._id === listing._id);
+  const isLike = wishList?.some((item) => item?._id === listing?._id);
   const [isLiked, setIsLiked] = useState(isLike);
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -32,7 +34,6 @@ const ListingCard = ({ listing, tripList }) => {
       console.log("error", error.message);
     }
   };
-
 
   const imageCount =
     listing?.listingPhotoPaths?.length ||
@@ -60,9 +61,7 @@ const ListingCard = ({ listing, tripList }) => {
             <img
               src={`http://localhost:6789/${image.replace("public", "")}`}
               alt="haha"
-              className={`${index === currentImageIndex ? "" : "hidden"} h-52 w-full object-cover transition-opacity duration-500 md:h-64 
-               
-              }`}
+              className={`${index === currentImageIndex ? "" : "hidden"} } h-52 w-full object-cover transition-opacity duration-500 md:h-64`}
             />
           </div>
         ))}
@@ -93,29 +92,49 @@ const ListingCard = ({ listing, tripList }) => {
           )}
         </button>
 
-        <div className="p-2 md:mt-3 md:p-4">
-          <Link
-            to={`/properties/${listing?._id || tripList?.listingId?._id}`}
-            className="font-bold hover:text-rose-400 md:text-lg"
-          >
-            {listing?.city || tripList.listingId.city},{" "}
-            {listing?.province || tripList.listingId.province},{" "}
-            {listing?.country || tripList.listingId.province}
-          </Link>
-          <p className="text-[2.3vw] text-gray-500 md:text-sm">
-            {listing?.category || tripList.listingId.category}
-          </p>
-          <p className="text-[2.3vw] text-gray-500 md:text-sm">
-            {listing?.type || tripList.startDate + " - " + tripList.endDate}
-          </p>
-          <p className="mt-2 text-sm font-bold md:text-lg">
-            {listing?.price || tripList.totalPrice}
-            <span className="text-[2.2vw] font-thin md:text-sm">
-              {" "}
-              {listing ? "per night" : "total"}
-            </span>
-          </p>
-        </div>
+        <Link
+          to={`${listing ? `/properties/${listing._id}` : `/trip-details/${tripList._id}`}`}
+        >
+          <div className="p-5 md:mt-3 md:p-4">
+            <h3 className="font-bold hover:text-rose-400 md:text-lg">
+              {listing?.title || tripList.listingId.title}
+            </h3>
+            <div className={`my-1 ${listing ? "grid" : ""} sm:grid-cols-2 `}>
+              <p className="flex items-center gap-1 text-[2.5vw] text-gray-500 md:text-sm">
+                {categories.map((item) =>
+                  item.label ===
+                  (listing?.category || tripList.listingId.category)
+                    ? item.icon
+                    : "",
+                )}
+
+                {listing?.category || tripList.listingId.category}
+              </p>
+              <p
+                className={`flex items-center mt-1 gap-1 text-[2.3vw] text-gray-500 md:text-sm`}
+              >
+                {types.map((item) =>
+                  item.name === listing?.type ? item.icon : "",
+                )}
+                {tripList ? <FaCalendarAlt /> :  " "}
+                {listing?.type || tripList.startDate + " - " + tripList.endDate}
+              </p>
+            </div>
+            <p className="flex items-center gap-1 text-[2vw] sm:text-sm">
+              <FaMapMarkerAlt className="text-gray-600" />
+              {listing?.city || tripList.listingId.city},{" "}
+              {listing?.province || tripList.listingId.province},{" "}
+              {listing?.country || tripList.listingId.province}
+            </p>
+            <p className="mt-2 text-sm font-bold md:text-lg">
+              $ {listing?.price || tripList.totalPrice}
+              <span className="text-[2.2vw] font-thin md:text-sm">
+                {" "}
+                {listing ? "per night" : "total"}
+              </span>
+            </p>
+          </div>
+        </Link>
       </div>
     </div>
   );

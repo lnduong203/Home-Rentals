@@ -250,7 +250,7 @@ const LoginPage = () => {
                 alt="login with facebook"
               />
               <FacebookLogin
-                appId="566520489435577"
+                appId={process.env.REACT_APP_FB_APP_ID}
                 autoLoad={false}
                 fields="name,email,picture"
                 callback={handleResponeFacebook}

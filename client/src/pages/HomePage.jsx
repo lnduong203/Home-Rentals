@@ -1,16 +1,18 @@
-import MainLayout from "../layouts/MainLayout"
-import Categories from "../components/Categories"
-import Listings from "../components/Listings"
-import Slide from "../components/Slide"
+import MainLayout from "../layouts/MainLayout";
+import Categories from "../components/Categories";
+import Listings from "../components/Listings";
+import Slide from "../components/Slide";
+
+import { slides } from "../data";
 
 
 const HomePage = () => {
   return (
     <MainLayout>
-      <Slide/>
-      <Categories/>
-      <Listings/>      
+      <Slide slides={slides} />
+      <Categories />
+      <Listings />
     </MainLayout>
-  )
-}
-export default HomePage
+  );
+};
+export default HomePage;

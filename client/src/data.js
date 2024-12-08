@@ -272,3 +272,27 @@ export const facilities = [
     icon: <MdPets />
   }
 ];
+
+export const slides = [
+  {
+    title: 'Welcome to HomeHihi',
+    image: 'assets/slide4.jpg',
+  },
+  {
+    title: 'Explore incredible places that cater to every interest and budget',
+    image: 'assets/slide.jpg',
+  },
+  {
+    title: 'Provides a perfect vacation experience',
+    image: 'assets/slide1.jpg',
+  },
+  // {
+  //   title: 'Second Slide',
+  //   image: 'assets/slide2.jpg',
+  // },
+  {
+    title: 'HomeHihi can satisfy your requirements',
+    image: 'assets/slide3.jpg',
+  },
+  
+]
