@@ -6,18 +6,21 @@ import "react-toastify/dist/ReactToastify.css";
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
 import { DateRange } from "react-date-range";
-// import { Calendar, DateRangePicker } from "react-date-range";
+import dateFormat from "dateformat";
 
 import Loading from "../../components/Loading";
 import MainLayout from "../../layouts/MainLayout";
 import { facilities } from "../../data";
 import { useSelector } from "react-redux";
+import Modal from "../../components/Modal";
+import { useModalContext } from "../../components/context/ModalProvider";
 
 const TripListDetails = () => {
   const customerId = useSelector((state) => state?.user?._id);
   const { tripId } = useParams();
   const navigate = useNavigate();
-
+  const { openPopup } = useModalContext();
+  // const [isShowModal, setShowModal] = useState(false);
   const [isCheckin, setIsCheckin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [listing, setListing] = useState(null);
@@ -70,6 +73,7 @@ const TripListDetails = () => {
       if (response.ok) {
         getListingDetails();
         toast.success("Check in successful");
+        setIsCheckin(true);
       } else toast.error("Check in failled");
     } catch (error) {
       console.log("Check in failled", error.message);
@@ -78,14 +82,14 @@ const TripListDetails = () => {
 
   const handleCancelBooking = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:6789/bookings/cancel-booking/${tripId}`,
-        {
-          method: "DELETE",
-        },
-      );
+      // const response = await fetch(
+      //   `http://localhost:6789/bookings/cancel-booking/${tripId}`,
+      //   {
+      //     method: "DELETE",
+      //   },
+      // );
 
-      if (response.ok) navigate(`/${customerId}/trip-list`);
+      // if (response.ok) navigate(`/${customerId}/trip-list`);
     } catch (error) {
       console.log("Cancel booking failled", error.message);
     }
@@ -121,7 +125,7 @@ const TripListDetails = () => {
                 <img
                   src={`http://localhost:6789/${photo.replace("public", "")}`}
                   alt="home-image"
-                  className="h-72 w-full object-fill"
+                  className="h-72 w-full object-cover"
                 />
               </div>
             ))}
@@ -193,11 +197,6 @@ const TripListDetails = () => {
                 <DateRange
                   className="mb-4 w-[130%] rounded-md bg-gray-100 shadow-lg sm:w-[100%] md:w-[95%]"
                   ranges={dateRange}
-
-                  // startDatePlaceholder={new Date(trip.startDate)}
-                  // endDatePlaceholder={new Date(trip.endDate)}
-                  // disabledDates={bookedDates}
-                  // editableDateInputs={false}
                 />
 
                 <h2 className="text-xl font-bold">
@@ -208,6 +207,11 @@ const TripListDetails = () => {
                 </h2>
                 <p className="my-2">Start Date: {trip.startDate}</p>
                 <p>End Date: {trip.endDate}</p>
+                {isCheckin && (
+                  <p>
+                    Check in: {dateFormat(new Date(), "dd/mm/yyyy  h:MM TT ")}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -215,16 +219,62 @@ const TripListDetails = () => {
           <div className="m-auto flex w-[70%] flex-col justify-around gap-4 md:flex-row">
             <button
               type="button"
-              onClick={handleCheckin}
+              onClick={() => {
+                openPopup(
+                  <Modal>
+                    <p className="py-2 text-[1.5vw] font-bold">
+                      Do you want to check in this room?{" "}
+                    </p>
+                    <hr />
+
+                    <div className="my-3 flex w-full justify-end gap-2">
+                      <button
+                        onClick={handleCheckin}
+                        className="rounded border border-green-400 px-6 py-2 hover:bg-green-500 hover:text-white"
+                      >
+                        Agree
+                      </button>
+                      <button className="rounded border border-rose-500 px-6 py-2 hover:bg-rose-500 hover:text-white">
+                        No
+                      </button>
+                    </div>
+                  </Modal>,
+                );
+              }}
               disabled={isCheckin}
               className={`${isCheckin ? "cursor-not-allowed opacity-50" : ""} my-[2vw] w-full rounded-lg bg-green-500 py-3 text-lg font-bold text-white hover:shadow-md hover:shadow-black md:w-1/2`}
             >
               Check in
             </button>
+
             {isCheckin ? (
               <button
                 type="button"
-                onClick={handleCancelBooking}
+                onClick={() => {
+                  openPopup(
+                    <Modal>
+                      <p className="py-2 text-[1.5vw] font-bold">
+                        Do you want to check out this room?{" "}
+                      </p>
+                      <hr />
+
+                      <div className="my-3 flex w-full justify-end gap-2">
+                        <button
+                          onClick={() => {
+                            handleCancelBooking();
+                            navigate(`/rating/${listing?._id}`);
+                          }}
+                          className="rounded border border-green-400 px-6 py-2 hover:bg-green-500 hover:text-white"
+                        >
+                          Agree
+                        </button>
+                        <button className="rounded border border-rose-500 px-6 py-2 hover:bg-rose-500 hover:text-white">
+                          No
+                        </button>
+                      </div>
+                    </Modal>,
+                  );
+                }}
                 className="w-full rounded-lg bg-rose-500 py-3 text-lg font-bold text-white hover:shadow-md hover:shadow-black md:my-[2vw] md:w-1/2"
               >
                 Check out
@@ -232,14 +282,35 @@ const TripListDetails = () => {
             ) : (
               <button
                 type="button"
-                onClick={handleCancelBooking}
+                onClick={() => {
+                  openPopup(
+                    <Modal>
+                      <p className="py-2 text-[1.5vw] font-bold">
+                        Do you want to cancel this room?{" "}
+                      </p>
+                      <hr />
+
+                      <div className="my-3 flex w-full justify-end gap-2">
+                        <button
+                          onClick={handleCancelBooking}
+                          className="rounded border border-green-400 px-6 py-2 hover:bg-green-500 hover:text-white"
+                        >
+                          Agree
+                        </button>
+                        <button className="rounded border border-rose-500 px-6 py-2 hover:bg-rose-500 hover:text-white">
+                          No
+                        </button>
+                      </div>
+                    </Modal>,
+                  );
+                }}
                 className="w-3/4 rounded-lg bg-rose-500 py-3 text-lg font-bold text-white hover:shadow-md hover:shadow-black md:my-[2vw] md:w-1/2"
               >
                 Cancel Booking
               </button>
             )}
           </div>
-        </div>{" "}
+        </div>
       </div>
     </MainLayout>
   );

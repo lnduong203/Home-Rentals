@@ -1,4 +1,4 @@
-export  function capitalizeFirstLetter(string) {
+export function capitalizeFirstLetter(string) {
     return string
         .toLowerCase()
         .split(" ")

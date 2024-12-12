@@ -33,7 +33,6 @@ const Listings = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory]);
 
- 
   return (
     <div className="bg-gray-100 py-3">
       <div className="my-[1vw] grid grid-cols-5 gap-2 px-[10vw] md:my-[1.5vw] md:grid-cols-8 md:gap-4">
@@ -58,7 +57,7 @@ const Listings = () => {
       ) : (
         <div className="grid grid-cols-2 gap-4 px-[10vw] md:grid-cols-3">
           {listings?.map((listing) => (
-            <ListingCard key={listing._id} listing={listing} />
+            <ListingCard key={listing._id} listing={listing} property={false} />
           ))}
         </div>
       )}

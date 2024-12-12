@@ -12,28 +12,43 @@ import { categories, types, facilities } from "../data";
 import { useNavigate } from "react-router-dom";
 const GOONGMAP_API_KEY = process.env.REACT_APP_GOONGMAP_API_KEY;
 
-const CreateListing = () => {
-  const [photos, setPhotos] = useState([]);
-  const [category, setCategoty] = useState("");
-  const [type, setType] = useState("");
-  const [amenities, setAmenities] = useState([]);
-  const [guestCount, setGuestCount] = useState(1);
-  const [bedroomCount, setBedroomCount] = useState(1);
-  const [bedCount, setBedCount] = useState(1);
-  const [bathroomCount, setBathroomCount] = useState(1);
-  const [formLoaction, setFormLocation] = useState({
-    streetAddress: "",
-    aptSuite: "",
-    city: "",
-    province: "",
-    country: "",
+const CreateListing = ({ listingInfo }) => {
+  const [photos, setPhotos] = useState(
+    listingInfo ? listingInfo.listingPhotoPaths : [],
+  );
+  const [category, setCategory] = useState(
+    listingInfo ? listingInfo.category : "",
+  );
+  const [type, setType] = useState(listingInfo ? listingInfo.type : "");
+  const [amenities, setAmenities] = useState(
+    listingInfo ? listingInfo.amenities : [],
+  );
+  const [guestCount, setGuestCount] = useState(
+    listingInfo ? listingInfo.guestCount : 1,
+  );
+  const [bedroomCount, setBedroomCount] = useState(
+    listingInfo ? listingInfo.bedroomCount : 1,
+  );
+  const [bedCount, setBedCount] = useState(
+    listingInfo ? listingInfo.bedCount : 1,
+  );
+  const [bathroomCount, setBathroomCount] = useState(
+    listingInfo ? listingInfo.bathroomCount : 1,
+  );
+  const [formLocation, setFormLocation] = useState({
+    streetAddress: listingInfo ? listingInfo.streetAddress : "",
+    aptSuite: listingInfo ? listingInfo.aptSuite : "",
+    district: listingInfo ? listingInfo.district : "",
+    commune: listingInfo ? listingInfo.commune : "",
+    province: listingInfo ? listingInfo.province : "",
+    country: listingInfo ? listingInfo.country : "",
   });
   const [formDescription, setFormDescription] = useState({
-    title: "",
-    description: "",
-    highlight: "",
-    highlightDetail: "",
-    price: '',
+    title: listingInfo ? listingInfo.title : "",
+    description: listingInfo ? listingInfo.description : "",
+    highlight: listingInfo ? listingInfo.highlight : "",
+    highlightDetail: listingInfo ? listingInfo.highlightDetail : "",
+    price: listingInfo ? listingInfo.price : "",
   });
   const navigate = useNavigate();
   const creatorId = useSelector((state) => state.user._id);
@@ -41,41 +56,49 @@ const CreateListing = () => {
   const handlePost = async (e) => {
     e.preventDefault();
     try {
-      if(!category) toast.warning("Please select a category");
-      else if(!type) toast.warning("Please select a type");
-      else if(amenities.length < 1) toast.warning("Please select amenities");
-      else if(photos.length < 1) toast.warning("Please upload at least one photo");
-      // else if (formLoaction.price < 1) toast.error("Please enter a valid price");
-      else{
-
+      if (!category) toast.warning("Please select a category");
+      else if (!type) toast.warning("Please select a type");
+      else if (amenities.length < 1) toast.warning("Please select amenities");
+      else if (photos.length < 1)
+        toast.warning("Please upload at least one photo");
+      else if (formLocation.price < 1)
+        toast.error("Please enter a valid price");
+      else {
         const listingForm = new FormData();
         listingForm.append("creator", creatorId);
         listingForm.append("category", category);
         listingForm.append("type", type);
-        listingForm.append("streetAddress", formLoaction.streetAddress);
-        listingForm.append("aptSuite", formLoaction.aptSuite);
-        listingForm.append("city", formLoaction.city);
-        listingForm.append("province", formLoaction.province);
-        listingForm.append("country", formLoaction.country);
+        listingForm.append("streetAddress", formLocation.streetAddress);
+        listingForm.append("aptSuite", formLocation.aptSuite);
+        listingForm.append("district", formLocation.district);
+        listingForm.append("commune", formLocation.commune);
+        listingForm.append("province", formLocation.province);
+        listingForm.append("country", formLocation.country);
         listingForm.append("guestCount", guestCount);
         listingForm.append("bedroomCount", bedroomCount);
         listingForm.append("bedCount", bedCount);
         listingForm.append("bathroomCount", bathroomCount);
-        amenities.forEach((amenity) => listingForm.append("amenities", amenity));
+        amenities.forEach((amenity) =>
+          listingForm.append("amenities", amenity),
+        );
         listingForm.append("title", formDescription.title);
         listingForm.append("description", formDescription.description);
         listingForm.append("highlight", formDescription.highlight);
         listingForm.append("highlightDetail", formDescription.highlightDetail);
         listingForm.append("price", formDescription.price);
         photos.forEach((photo) => listingForm.append("listingPhotos", photo));
-  
-        const response = await fetch("http://localhost:6789/properties/create", {
-          method: "POST",
-          body: listingForm,
-        });
-        if (response.ok) navigate("/");
-      }
 
+        const response = await fetch(
+          listingInfo
+            ? `http://localhost:6789/properties/${listingInfo._id}/update`
+            : "http://localhost:6789/properties/create",
+          {
+            method: `${listingInfo ? "PUT" : "POST"}`,
+            body: listingForm,
+          },
+        );
+        if (response.ok) navigate(`/${creatorId}/property-list`);
+      }
     } catch (error) {
       console.log("Failed to create listing", error.message);
     }
@@ -98,7 +121,7 @@ const CreateListing = () => {
 
   const handleChangeLocation = (e) => {
     const { name, value } = e.target;
-    setFormLocation({ ...formLoaction, [name]: value });
+    setFormLocation({ ...formLocation, [name]: value });
   };
 
   const handleUploadPhotos = (e) => {
@@ -120,11 +143,11 @@ const CreateListing = () => {
       prevPhotos.filter((_, index) => index !== indexToRemove),
     );
   };
-  /**Goong map */
   const [suggestions, setSuggestions] = useState([]);
+
   const handleAddressChange = async (e) => {
     const value = e.target.value;
-    setFormLocation({ ...formLoaction, streetAddress: value });
+    setFormLocation({ ...formLocation, streetAddress: value });
 
     if (value.length > 2) {
       try {
@@ -149,43 +172,14 @@ const CreateListing = () => {
       const data = await response.json();
       const place = data.result;
 
-      const addressComponents = {
-        streetAddress: "",
-        aptSuite: "",
-        city: "",
-        province: "",
+      setFormLocation({
+        streetAddress: place.formatted_address || "",
+        aptSuite: place.name || "",
+        commune: place.compound.commune || "",
+        district: place.compound.district || "",
+        province: place.compound.province || "",
         country: "",
-      };
-
-      place.address_components.forEach((component) => {
-        const types = component.types;
-        if (types.includes("street_number")) {
-          addressComponents.streetAddress = component.long_name;
-        }
-        if (types.includes("route")) {
-          addressComponents.streetAddress += ` ${component.long_name}`;
-        }
-        if (types.includes("subpremise")) {
-          addressComponents.aptSuite = component.long_name;
-        }
-        if (
-          types.includes("locality") ||
-          types.includes("administrative_area_level_2")
-        ) {
-          addressComponents.city = component.long_name;
-        }
-        if (types.includes("administrative_area_level_1")) {
-          addressComponents.province = component.long_name;
-        }
-        if (types.includes("country")) {
-          addressComponents.country = component.long_name;
-        }
       });
-
-      setFormLocation((prevLocation) => ({
-        ...prevLocation,
-        ...addressComponents,
-      }));
       setSuggestions([]);
     } catch (error) {
       console.error("Error fetching place details:", error);
@@ -214,7 +208,7 @@ const CreateListing = () => {
                   <div
                     key={index}
                     className={`${category === item.label ? "border-rose-500 shadow-md shadow-rose-400" : ""} flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-gray-300 p-2 hover:border-rose-400`}
-                    onClick={() => setCategoty(item.label)}
+                    onClick={() => setCategory(item.label)}
                   >
                     <div className="mb-[1vw] text-[1.5vw]">{item.icon}</div>
                     <p className="text-center text-[1vw] font-bold">
@@ -246,9 +240,9 @@ const CreateListing = () => {
               </div>
 
               <h3 className="mb-[1.5vw] mt-[3vw] text-[1.8vw] font-bold md:text-[1.2vw]">
-                Where's your place loacated?
+                Where's your place located?
               </h3>
-              <div className="w-2/3">
+              <div className="w-3/4">
                 <div className="mb-4">
                   <label
                     className="mb-2 block text-sm font-bold text-gray-700 dark:text-white"
@@ -260,14 +254,14 @@ const CreateListing = () => {
                     className="focus:shadow-outline mb-3 w-full appearance-none rounded-lg border p-3 text-sm leading-tight text-gray-700 shadow focus:outline-none dark:text-white"
                     id="streetAddress"
                     name="streetAddress"
-                    type="streetAddress"
+                    type="text"
                     placeholder="Street Address"
-                    value={formLoaction.streetAddress}
+                    value={formLocation.streetAddress}
                     onChange={handleAddressChange}
                     required
                   />
                   <ul className="mt-2 border">
-                    {suggestions.map((suggestion, index) => (
+                    {(suggestions || [])?.map((suggestion, index) => (
                       <li
                         key={index}
                         className="cursor-pointer border-b p-2"
@@ -292,7 +286,7 @@ const CreateListing = () => {
                       name="aptSuite"
                       type="text"
                       placeholder="Apartment, Suite, etc."
-                      value={formLoaction.aptSuite}
+                      value={formLocation.aptSuite}
                       onChange={handleChangeLocation}
                       required
                     />
@@ -300,17 +294,35 @@ const CreateListing = () => {
                   <div className="md:ml-2 md:w-1/2">
                     <label
                       className="mb-2 block text-sm font-bold text-gray-700 dark:text-white"
-                      htmlFor="city"
+                      htmlFor="commune"
                     >
-                      City
+                      Commnue/Ward
                     </label>
                     <input
                       className="focus:shadow-outline w-full appearance-none rounded-lg border p-3 text-sm leading-tight text-gray-700 shadow focus:outline-none dark:text-white"
-                      id="city"
-                      name="city"
+                      id="commune"
+                      name="commune"
                       type="text"
                       placeholder="City"
-                      value={formLoaction.city}
+                      value={formLocation.commune}
+                      onChange={handleChangeLocation}
+                      required
+                    />
+                  </div>
+                  <div className="mb-4 md:mb-0 md:mr-2 md:w-1/2">
+                    <label
+                      className="mb-2 block text-sm font-bold text-gray-700 dark:text-white"
+                      htmlFor="district"
+                    >
+                      District
+                    </label>
+                    <input
+                      className="focus:shadow-outline w-full appearance-none rounded-lg border p-3 text-sm leading-tight text-gray-700 shadow focus:outline-none md:ml-3 dark:text-white"
+                      id="district"
+                      name="district"
+                      type="text"
+                      placeholder="District"
+                      value={formLocation.district}
                       onChange={handleChangeLocation}
                       required
                     />
@@ -322,7 +334,7 @@ const CreateListing = () => {
                       className="mb-2 block text-sm font-bold text-gray-700 dark:text-white"
                       htmlFor="province"
                     >
-                      Province
+                      Province/City
                     </label>
                     <input
                       className="focus:shadow-outline w-full appearance-none rounded-lg border p-3 text-sm leading-tight text-gray-700 shadow focus:outline-none dark:text-white"
@@ -330,7 +342,7 @@ const CreateListing = () => {
                       name="province"
                       type="text"
                       placeholder="Province"
-                      value={formLoaction.province}
+                      value={formLocation.province}
                       onChange={handleChangeLocation}
                       required
                     />
@@ -348,7 +360,7 @@ const CreateListing = () => {
                       name="country"
                       type="text"
                       placeholder="Country"
-                      value={formLoaction.country}
+                      value={formLocation.country}
                       onChange={handleChangeLocation}
                       required
                     />
@@ -503,7 +515,11 @@ const CreateListing = () => {
                                   className="relative h-[15vw] w-[20vw] rounded-lg border border-gray-500 object-cover shadow-lg"
                                 >
                                   <img
-                                    src={URL.createObjectURL(photo)}
+                                    src={
+                                      photo instanceof File
+                                        ? URL.createObjectURL(photo)
+                                        : `http://localhost:6789/${photo?.replace("public", "")}`
+                                    }
                                     alt="place"
                                     className="h-full w-full rounded-lg object-cover"
                                   />
@@ -580,7 +596,7 @@ const CreateListing = () => {
                   required
                   className="mb-4 block w-full rounded-md border border-gray-300 p-4 text-gray-900 placeholder-gray-500 sm:text-sm"
                   placeholder="Hilights"
-                  value={formDescription.highlights}
+                  value={formDescription.highlight}
                   onChange={handleChangeDescription}
                 />
 
@@ -614,13 +630,23 @@ const CreateListing = () => {
                 </div>
               </div>
             </div>
-            <button
-              type="submit"
-              // disabled={photos.length < 1 || !category || !type || amenities.length < 1} 
-              className="mb-[3vw] rounded-lg bg-rose-500 px-4 py-3 font-bold text-white hover:shadow-md hover:shadow-white"
-            >
-              Create Your Listing
-            </button>
+            {listingInfo ? (
+              <button
+                type="submit"
+                // disabled={photos.length < 1 || !category || !type || amenities.length < 1}
+                className="mb-[3vw] rounded-lg bg-green-500 px-4 py-3 font-bold text-white hover:shadow-md hover:shadow-white"
+              >
+                Update Your Listing
+              </button>
+            ) : (
+              <button
+                type="submit"
+                // disabled={photos.length < 1 || !category || !type || amenities.length < 1}
+                className="mb-[3vw] rounded-lg bg-rose-500 px-4 py-3 font-bold text-white hover:shadow-md hover:shadow-white"
+              >
+                Create Your Listing
+              </button>
+            )}
           </form>
         </div>
       </div>

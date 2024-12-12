@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaRegHeart, FaHeart } from "react-icons/fa6";
-import "react-date-range/dist/styles.css"; 
-import "react-date-range/dist/theme/default.css"; 
+import { MdLocationOn } from "react-icons/md";
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 import { DateRange } from "react-date-range";
 import { useSelector } from "react-redux";
 
 import Loading from "../components/Loading";
 import MainLayout from "../layouts/MainLayout";
 import { facilities } from "../data";
+// import HouseInfo from "../components/HouseInfo";
 
 const ListingDetails = () => {
   const customerId = useSelector((state) => state?.user?._id);
@@ -60,9 +62,6 @@ const ListingDetails = () => {
     }
   };
 
-
-  
-  
   useEffect(() => {
     getListingDetails();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -99,8 +98,9 @@ const ListingDetails = () => {
     <Loading />
   ) : (
     <MainLayout>
+      {/* <HouseInfo listing={listing}/> */}
       <div className="bg-gray-200 px-[10vw] pb-8">
-        <div className="flex justify-between py-8">
+        <div className="flex justify-between pt-8">
           <h1 className="text-4xl font-bold text-blue-900">{listing.title}</h1>
           <button className="flex items-center gap-3 text-lg md:text-[1.3vw]">
             {isLiked ? (
@@ -117,6 +117,7 @@ const ListingDetails = () => {
             Save
           </button>
         </div>
+        <p className="flex gap-2 my-2 items-center text-blue-900"><MdLocationOn /> {listing.streetAddress}</p>
         <div className="rounded-lg bg-white p-5">
           <div className="my-5 grid grid-cols-2 gap-4 md:grid-cols-3">
             {listing.listingPhotoPaths?.map((photo, index) => (
@@ -124,24 +125,28 @@ const ListingDetails = () => {
                 <img
                   src={`http://localhost:6789/${photo.replace("public", "")}`}
                   alt="home-image"
-                  className="h-72 w-full object-fill"
+                  className="h-72 w-full object-cover"
                 />
               </div>
             ))}
           </div>
 
           <h2 className="mb-2 text-xl font-bold text-rose-400 md:text-2xl">
-            {listing.type} in {listing.city}, {listing.province},{" "}
+            {listing.type} in {listing.district}, {listing.province},{" "}
             {listing.country}
           </h2>
           <p className="text-md mb-5">
-          {listing.guestCount} guest - {listing.bedroomCount} bedroom(s) -{" "}
+            {listing.guestCount} guest - {listing.bedroomCount} bedroom(s) -{" "}
             {listing.bedCount} bed(s) - {listing.bathroomCount} bathroom(s)
           </p>
           <hr className="rounded-lg border-[1.5px] border-gray-400" />
           <div className="flex items-center gap-4 py-3">
             <img
-              src={`http://localhost:6789/${listing.creator.profileImagePath.replace("public", "")}`}
+              src={
+                listing?.creator?.profileImagePath?.includes("public")
+                  ? `http://localhost:6789/${listing?.creator?.profileImagePath.replace("public", "")}`
+                  : `${listing?.creator.profileImagePath}`
+              }
               alt="profile"
               className="h-14 w-14 rounded-full object-cover"
             />
@@ -152,6 +157,7 @@ const ListingDetails = () => {
           <hr className="rounded-lg border-[1.5px] border-gray-400" />
 
           <h3 className="pt-5 text-xl font-bold">Description</h3>
+          
           <p className="my-3">{listing.description}</p>
           <hr className="rounded-lg border-[1.5px] border-gray-400" />
 

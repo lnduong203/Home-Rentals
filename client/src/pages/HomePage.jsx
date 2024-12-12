@@ -5,11 +5,12 @@ import Slide from "../components/Slide";
 
 import { slides } from "../data";
 
-
 const HomePage = () => {
   return (
     <MainLayout>
-      <Slide slides={slides} />
+      <div className="h-[90vh]">
+        <Slide slides={slides} button={true} />
+      </div>
       <Categories />
       <Listings />
     </MainLayout>

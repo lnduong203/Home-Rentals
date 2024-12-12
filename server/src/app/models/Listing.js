@@ -4,7 +4,7 @@ const ListingSchema = new mongoose.Schema(
     {
         creator: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'User',
+            ref: "User",
         },
         category: {
             type: String,
@@ -22,7 +22,11 @@ const ListingSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        city: {
+        commune: {
+            type: String,
+            required: true,
+        },
+        district: {
             type: String,
             required: true,
         },
@@ -54,7 +58,7 @@ const ListingSchema = new mongoose.Schema(
             type: Array,
             default: [],
         },
-        listingPhotoPaths: [{type: String}],
+        listingPhotoPaths: [{ type: String }],
         title: {
             type: String,
             required: true,
@@ -66,7 +70,6 @@ const ListingSchema = new mongoose.Schema(
         highlight: {
             type: String,
             required: true,
-            
         },
         highlightDetail: {
             type: String,

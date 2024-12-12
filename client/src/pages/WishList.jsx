@@ -12,7 +12,7 @@ const WishList = () => {
   return (
     <MainLayout>
       <div className="px-[10vw]">
-        <h2 className="text-4xl font-bold text-blue-900">Your Wish List</h2>
+        <h2 className="text-4xl font-bold my-5 text-blue-900">Your Wish List</h2>
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-7">
           {!wishList ? (
             <p>You don't have any trip yet</p>

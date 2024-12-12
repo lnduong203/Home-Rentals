@@ -20,5 +20,7 @@ const upload = multer({storage});
 router.get("/", listingController.filterListings);
 router.post("/create", upload.array("listingPhotos"), listingController.createListing);
 router.get("/:id", listingController.listingDetails);
+router.put("/:id/update", upload.array("listingPhotos"), listingController.updateListing);
+router.delete("/:id/delete", listingController.deleteListing);
 
 export default router;
