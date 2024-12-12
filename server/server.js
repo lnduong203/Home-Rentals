@@ -26,6 +26,6 @@ connect();
 //init route
 router(app);
 
-app.listen(port, host, () => {
+app.listen(port, () => {
     console.log(`Server is running on http://${host}:${port} at ${appSetting} mode`);
 });
