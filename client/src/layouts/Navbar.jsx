@@ -15,6 +15,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 
 import { logout } from "../redux/state";
+import { API_URL } from "../utils/constants";
 // import noImage from "../assets/no-avatar.png";
 
 const Navbar = () => {
@@ -86,9 +87,7 @@ const Navbar = () => {
                   <Person className="text-gray-500 " />
                 ) : (
                   <img
-                    // src={`http://localhost:6789/${user.profileImagePath.replace("public", "")} || ${user.profileImagePath}`}
-                    src={user.profileImagePath.includes("public") ? `http://localhost:6789/${user.profileImagePath.replace("public", "")}` : user.profileImagePath}
-                    // src={`http://localhost:6789/${user.profileImagePath.replace("public", "")}`}
+                    src={user.profileImagePath.includes("public") ? `${API_URL}/${user.profileImagePath.replace("public", "")}` : user.profileImagePath}
                     alt="user"
                     className="hidden h-10 w-10 rounded-full  border-2 border-green-300 object-cover sm:block"
                   />

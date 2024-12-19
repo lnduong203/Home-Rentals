@@ -7,6 +7,7 @@ import { setListings } from "../redux/state";
 import MainLayout from "../layouts/MainLayout";
 import ListingCard from "../components/ListingCard";
 import Loading from "../components/Loading";
+import { API_URL } from "../utils/constants";
 
 const SearchPage = () => {
   const { search } = useParams();
@@ -18,7 +19,7 @@ const SearchPage = () => {
   const getSearchListings = async () => {
     try {
       const response = await fetch(
-        `http://localhost:6789/properties/?q=${search}`,
+        `${API_URL}/properties/?q=${search}`,
         { method: "GET" },
       );
       if (response.ok) {

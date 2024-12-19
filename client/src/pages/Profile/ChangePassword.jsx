@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 
 import MainLayout from "../../layouts/MainLayout";
 import SideBar from "./components/SideBar";
+import { API_URL } from "../../utils/constants";
 
 const ChangePassword = () => {
   const userId = useSelector((state) => state.user._id);
@@ -33,16 +33,13 @@ const ChangePassword = () => {
       form.append("currentPassword", formPassword.currentPassword);
       form.append("newPassword", formPassword.newPassword);
 
-      const respone = await fetch(
-        `http://localhost:6789/user/${userId}/change-password`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: form.toString(),
+      const respone = await fetch(`${API_URL}/user/${userId}/change-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
         },
-      );
+        body: form.toString(),
+      });
       if (respone.ok) {
         toast.success("Password changed successfully");
       } else {
@@ -59,8 +56,14 @@ const ChangePassword = () => {
         formPassword.confirmNewPassword === "",
     );
     setCheckSamePassword(
-      formPassword.currentPassword !== formPassword.newPassword || formPassword.newPassword === "",)
-  }, [formPassword.newPassword, formPassword.confirmNewPassword, formPassword.currentPassword]);
+      formPassword.currentPassword !== formPassword.newPassword ||
+        formPassword.newPassword === "",
+    );
+  }, [
+    formPassword.newPassword,
+    formPassword.confirmNewPassword,
+    formPassword.currentPassword,
+  ]);
 
   return (
     <MainLayout>
@@ -148,13 +151,11 @@ const ChangePassword = () => {
                   Password are not matching !
                 </p>
               )}
-              {
-                !checkSamePassword && (
-                  <p className="ml-1 text-xs italic text-red-500">
-                    New password must be different from current password !
-                  </p>
-                )
-              }
+              {!checkSamePassword && (
+                <p className="ml-1 text-xs italic text-red-500">
+                  New password must be different from current password !
+                </p>
+              )}
             </div>
             <div className="mt-2 flex justify-end">
               <button

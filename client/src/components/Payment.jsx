@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
+
+import { API_URL } from "../utils/constants";
 
 const PaymentForm = () => {
     const [amount, setAmount] = useState("");
@@ -8,7 +10,7 @@ const PaymentForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         // Handle form submission logic here
-        const response = await fetch("http://localhost:6789/bookings/payment", {
+        const response = await fetch( `${API_URL}/bookings/payment`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

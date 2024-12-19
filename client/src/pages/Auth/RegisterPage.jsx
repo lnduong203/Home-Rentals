@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+import { API_URL } from "../../utils/constants";
+
 const RegisterPage = () => {
   const [formData, setformData] = useState({
     firstName: "",
@@ -36,7 +38,7 @@ const RegisterPage = () => {
       for (let key in formData) {
         registerFrom.append(key, formData[key]);
       }
-      const response = await fetch("http://localhost:6789/auth/register", {
+      const response = await fetch( `${API_URL}/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",

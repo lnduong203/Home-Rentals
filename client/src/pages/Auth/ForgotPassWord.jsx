@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa6";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { API_URL } from "../../utils/constants";
 
 const ForgotPassWord = () => {
   const [email, setEmail] = useState("");
@@ -12,7 +12,7 @@ const ForgotPassWord = () => {
     e.preventDefault();
     try {
       const response = await fetch(
-        "http://localhost:6789/user/forgot-password",
+        `${API_URL}/user/forgot-password`,
         {
           method: "PATCH",
           headers: {

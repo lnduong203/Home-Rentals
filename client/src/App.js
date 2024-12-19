@@ -20,7 +20,8 @@ import TripListDetails from "./pages/TripList/TripListDetails";
 import Payment from "./components/Payment";
 import PropertyDetails from "./pages/PropertyList/PropertyDetails";
 import ListingUpdate from "./pages/Listing/ListingUpdate";
-import Rating from "./components/Rating";
+import Rating from "./pages/Rating";
+
 
 function App() {
   return (

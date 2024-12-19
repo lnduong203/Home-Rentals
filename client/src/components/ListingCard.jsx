@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { FaMapMarkerAlt, FaCalendarAlt } from "react-icons/fa";
+import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import { FaRegHeart, FaHeart } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { setWishList } from "../redux/state";
-import { categories, types } from "../data";
+import { categories, types } from "../utils/data";
 import Slide from "./Slide";
+import { API_URL } from "../utils/constants";
 
 const ListingCard = ({ listing, tripList, property }) => {
   const dispatch = useDispatch();
@@ -15,11 +17,10 @@ const ListingCard = ({ listing, tripList, property }) => {
   const isLike = wishList?.some((item) => item?._id === listing?._id);
   const [isLiked, setIsLiked] = useState(isLike);
 
-
   const handleWishtList = async () => {
     try {
       const respone = await fetch(
-        `http://localhost:6789/user/${user._id}/${listing._id}`,
+        `${API_URL}/user/${user._id}/${listing._id}`,
         {
           method: "PATCH",
         },
@@ -68,7 +69,20 @@ const ListingCard = ({ listing, tripList, property }) => {
               : `/trip-details/${tripList._id}`
           }
         >
-          <div className="p-5 md:mt-3 md:p-4">
+          <div className="p-5 md:p-4">
+            <div className="flex">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <StarRoundedIcon
+                  fontSize="small"
+                  style={{
+                    color:
+                      star <= Math.round(listing?.averageRating)
+                        ? "#ecc94b"
+                        : "#a0aec0",
+                  }}
+                />
+              ))}
+            </div>
             <h3
               title={listing?.title || tripList?.listingId?.title}
               className="h-6 w-full overflow-hidden font-bold hover:text-rose-400 md:h-8 md:text-lg"
@@ -93,7 +107,8 @@ const ListingCard = ({ listing, tripList, property }) => {
                   item.name === listing?.type ? item.icon : "",
                 )}
                 {tripList ? <FaCalendarAlt /> : " "}
-                {listing?.type || tripList?.startDate + " - " + tripList?.endDate}
+                {listing?.type ||
+                  tripList?.startDate + " - " + tripList?.endDate}
               </p>
             </div>
             <p className="flex items-center gap-1 text-[2vw] sm:text-sm">

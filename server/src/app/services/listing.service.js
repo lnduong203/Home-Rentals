@@ -115,3 +115,16 @@ export const getByCreator = async (creatorId) => {
 export const remove = async (id) => {
     return await Listing.findByIdAndDelete(id);
 };
+
+export const updateRating = async (listingId, ratingPoint) => {
+    const listing = await Listing.findById(listingId);
+    const totalRating = listing.totalRating + ratingPoint;
+    const ratingCount = listing.ratingCount + 1;
+    const averageRating = totalRating / ratingCount;
+
+    return await Listing.findByIdAndUpdate(listingId, {
+        totalRating,
+        ratingCount,
+        averageRating,
+    });
+}

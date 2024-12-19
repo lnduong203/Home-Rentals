@@ -2,18 +2,19 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaRegHeart, FaHeart } from "react-icons/fa6";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
 import { DateRange } from "react-date-range";
-import dateFormat from "dateformat";
+
 
 import Loading from "../../components/Loading";
 import MainLayout from "../../layouts/MainLayout";
-import { facilities } from "../../data";
+import { facilities } from "../../utils/data";
 import { useSelector } from "react-redux";
 import Modal from "../../components/Modal";
 import { useModalContext } from "../../components/context/ModalProvider";
+import { API_URL } from "../../utils/constants";
+import { formatDate } from "../../utils/handler";
 
 const TripListDetails = () => {
   const customerId = useSelector((state) => state?.user?._id);
@@ -32,7 +33,7 @@ const TripListDetails = () => {
 
   const getListingDetails = async () => {
     try {
-      const respone = await fetch(`http://localhost:6789/bookings/${tripId}`, {
+      const respone = await fetch(`${API_URL}/bookings/${tripId}`, {
         method: "GET",
       });
 
@@ -63,12 +64,9 @@ const TripListDetails = () => {
 
   const handleCheckin = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:6789/bookings/check-in/${tripId}`,
-        {
-          method: "PATCH",
-        },
-      );
+      const response = await fetch(`${API_URL}/bookings/check-in/${tripId}`, {
+        method: "PATCH",
+      });
 
       if (response.ok) {
         getListingDetails();
@@ -83,12 +81,11 @@ const TripListDetails = () => {
   const handleCancelBooking = async () => {
     try {
       // const response = await fetch(
-      //   `http://localhost:6789/bookings/cancel-booking/${tripId}`,
+      //   `${API_URL}/bookings/cancel-booking/${tripId}`,
       //   {
       //     method: "DELETE",
       //   },
       // );
-
       // if (response.ok) navigate(`/${customerId}/trip-list`);
     } catch (error) {
       console.log("Cancel booking failled", error.message);
@@ -123,7 +120,7 @@ const TripListDetails = () => {
             {listing?.listingPhotoPaths?.map((photo, index) => (
               <div key={`photo-${index}`} className="border shadow-lg">
                 <img
-                  src={`http://localhost:6789/${photo.replace("public", "")}`}
+                  src={`${API_URL}/${photo.replace("public", "")}`}
                   alt="home-image"
                   className="h-72 w-full object-cover"
                 />
@@ -144,7 +141,7 @@ const TripListDetails = () => {
             <img
               src={
                 trip?.hostId?.profileImagePath?.includes("public")
-                  ? `http://localhost:6789/${trip?.hostId.profileImagePath.replace("public", "")}`
+                  ? `${API_URL}/${trip?.hostId.profileImagePath.replace("public", "")}`
                   : `${trip?.hostId.profileImagePath}`
               }
               alt="profile"
@@ -209,7 +206,7 @@ const TripListDetails = () => {
                 <p>End Date: {trip.endDate}</p>
                 {isCheckin && (
                   <p>
-                    Check in: {dateFormat(new Date(), "dd/mm/yyyy  h:MM TT ")}
+                    Check in: {formatDate(new Date())}
                   </p>
                 )}
               </div>

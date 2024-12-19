@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { setUserProfile } from "../../redux/state";
 
 import MainLayout from "../../layouts/MainLayout";
 import SideBar from "./components/SideBar";
+import { API_URL } from "../../utils/constants";
 
 const ProfileSetting = () => {
   const user = useSelector((state) => state.user);
@@ -26,13 +26,10 @@ const ProfileSetting = () => {
       for (const key in formUser) {
         form.append(key, formUser[key]);
       }
-      const response = await fetch(
-        `http://localhost:6789/user/update-me/${user._id}`,
-        {
-          method: "POST",
-          body: form,
-        },
-      );
+      const response = await fetch(`${API_URL}/user/update-me/${user._id}`, {
+        method: "POST",
+        body: form,
+      });
 
       if (response.ok) {
         const data = await response.json();
@@ -79,7 +76,7 @@ const ProfileSetting = () => {
                         user.profileImagePath && formUser.profileImagePath
                           ? user.profileImagePath === formUser.profileImagePath
                             ? user.profileImagePath.includes("public")
-                              ? `http://localhost:6789/${formUser.profileImagePath.replace("public", "")}`
+                              ? `${API_URL}/${formUser.profileImagePath.replace("public", "")}`
                               : user.profileImagePath
                             : URL.createObjectURL(formUser.profileImagePath)
                           : "/assets/no-avatar.jpg"

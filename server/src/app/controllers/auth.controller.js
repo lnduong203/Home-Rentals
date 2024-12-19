@@ -1,5 +1,5 @@
 // import * as userService from "../services/user.service.js";
-import {GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, JWT_SECRET} from "../../configs/constants.js";
+import {APP_URL_CLIENT, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, JWT_SECRET} from "../../configs/constants.js";
 import * as authService from "../services/auth.service.js";
 import {OAuth2Client} from "google-auth-library";
 import jwt from "jsonwebtoken";
@@ -34,10 +34,11 @@ export const login = async (req, res) => {
     }
 };
 
+/** Google Login */
 const verifyToken = async (token) => {
     const ticket = await client.verifyIdToken({
         idToken: token,
-        audience: GOOGLE_CLIENT_ID,
+        audience: GOOGLE_CLIENT_ID
     });
     return ticket.getPayload();
 };
@@ -46,7 +47,7 @@ export const googleLogin = async (req, res) => {
     try {
         const {tokens} = await client.getToken({
             code: req.body.code,
-            redirect_uri: "http://localhost:3000", // URL phải khớp với cài đặt trên Google Cloud
+            redirect_uri: APP_URL_CLIENT, // URL phải khớp với cài đặt trên Google Cloud
         });
         const {id_token} = tokens;
         const payload = await verifyToken(id_token);
@@ -59,11 +60,11 @@ export const googleLogin = async (req, res) => {
         res.status(500).json({message: "Internal server error"});
     }
 };
+/**************/
 
 export const facebookLogin = async (req, res) => {
     try {
         const {accessToken} = req.body;
-        console.log("Received access token:", accessToken);
 
         const response = await fetch(
             `https://graph.facebook.com/me?fields=id,first_name,last_name,email,picture&access_token=${accessToken}`,
@@ -72,10 +73,7 @@ export const facebookLogin = async (req, res) => {
             },
         );
 
-        console.log("Facebook response status:", response.status);
         const data = await response.json();
-        console.log("Facebook response data:", data);
-
         if (!data || !data.id) {
             return res.status(400).json({message: "Invalid Facebook token"});
         }

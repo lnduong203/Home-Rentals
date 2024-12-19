@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { categories } from "../data.js";
+import { categories } from "../utils/data";
 import { setListings } from "../redux/state.js";
 import ListingCard from "./ListingCard.jsx";
 import Loading from "./Loading.jsx";
+import { API_URL } from "../utils/constants.js";
 
 const Listings = () => {
   const dispatch = useDispatch();
@@ -17,7 +18,7 @@ const Listings = () => {
   const getFeedListings = async () => {
     try {
       const response = await fetch(
-        `http://localhost:6789/properties/?q=${selectedCategory === "All" ? "" : `${selectedCategory}`}`,
+        `${API_URL}/properties/?q=${selectedCategory === "All" ? "" : `${selectedCategory}`}`,
         { method: "GET" },
       );
 

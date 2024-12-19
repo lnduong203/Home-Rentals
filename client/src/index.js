@@ -1,15 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import "react-toastify/dist/ReactToastify.css";
 import App from "./App";
 import { Provider } from "react-redux";
-import { store } from "./redux/store";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+
+import { store } from "./redux/store";
 import ModalProvider from "./components/context/ModalProvider";
+import { GG_CLIENT_ID } from "./utils/constants";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <>
-    <GoogleOAuthProvider clientId={process.env.REACT_APP_GG_CLIENT_ID}>
+    <GoogleOAuthProvider clientId={GG_CLIENT_ID}>
       <Provider store={store}>
         <ModalProvider>
           <App />

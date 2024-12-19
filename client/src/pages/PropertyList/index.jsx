@@ -6,6 +6,7 @@ import Loading from "../../components/Loading";
 import MainLayout from "../../layouts/MainLayout";
 import ListingCard from "../../components/ListingCard";
 import { setPropertyList } from "../../redux/state";
+import { API_URL } from "../../utils/constants";
 
 const PropertyList = () => {
   const dispatch = useDispatch();
@@ -15,12 +16,9 @@ const PropertyList = () => {
 
   const getPropertyList = async () => {
     try {
-      const respone = await fetch(
-        `http://localhost:6789/user/${userId}/property-list`,
-        {
-          method: "GET",
-        },
-      );
+      const respone = await fetch(`${API_URL}/user/${userId}/property-list`, {
+        method: "GET",
+      });
 
       const data = await respone.json();
 
@@ -51,7 +49,7 @@ const PropertyList = () => {
           ) : (
             propertyList?.map((property) => (
               <div key={property._id}>
-                <ListingCard  listing={property} property={true} />
+                <ListingCard listing={property} property={true} />
               </div>
             ))
           )}

@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaRegHeart, FaHeart } from "react-icons/fa6";
 import { MdLocationOn } from "react-icons/md";
+import StarRoundedIcon from "@mui/icons-material/StarRounded";
+import { TbMoodEmpty } from "react-icons/tb";
+import { toast, ToastContainer } from "react-toastify";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { DateRange } from "react-date-range";
@@ -9,8 +12,9 @@ import { useSelector } from "react-redux";
 
 import Loading from "../components/Loading";
 import MainLayout from "../layouts/MainLayout";
-import { facilities } from "../data";
-// import HouseInfo from "../components/HouseInfo";
+import { facilities } from "../utils/data";
+import { API_URL } from "../utils/constants";
+import RatingList from "./Rating/components/RatingList";
 
 const ListingDetails = () => {
   const customerId = useSelector((state) => state?.user?._id);
@@ -19,6 +23,7 @@ const ListingDetails = () => {
 
   const [loading, setLoading] = useState(true);
   const [listing, setListing] = useState(null);
+  const [rating, setRating] = useState(null);
   const [isLiked, setIsLiked] = useState(false);
   const [dateRange, setDateRange] = useState([
     { startDate: new Date(), endDate: new Date(), key: "selection" },
@@ -35,16 +40,13 @@ const ListingDetails = () => {
 
   const getListingDetails = async () => {
     try {
-      const respone = await fetch(
-        `http://localhost:6789/properties/${listingId}`,
-        {
-          method: "GET",
-        },
-      );
+      const respone = await fetch(`${API_URL}/properties/${listingId}`, {
+        method: "GET",
+      });
 
       // Lấy danh sách các ngày đã được đặt
       const bookedResponse = await fetch(
-        `http://localhost:6789/bookings/booked-dates/${listingId}`,
+        `${API_URL}/bookings/booked-dates/${listingId}`,
         {
           method: "GET",
         },
@@ -62,8 +64,23 @@ const ListingDetails = () => {
     }
   };
 
+  const getRating = async () => {
+    try {
+      const response = await fetch(`${API_URL}/rating/${listingId}`, {
+        method: "GET",
+      });
+      if (response.ok) {
+        const rating = await response.json();
+        setRating(rating);
+      }
+    } catch (error) {
+      console.log("error", error.message);
+    }
+  };
+
   useEffect(() => {
     getListingDetails();
+    getRating();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listingId]);
 
@@ -77,17 +94,18 @@ const ListingDetails = () => {
         endDate: dateRange[0].endDate.toDateString(),
         totalPrice: listing.price * countDay,
       };
+      if (customerId === listing.creator._id) {
+        toast.error("You can't booking your own home");
+      } else {
+        const response = await fetch(`${API_URL}/bookings/create`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(bookingForm),
+        });
 
-      const response = await fetch("http://localhost:6789/bookings/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(bookingForm),
-      });
-
-      if (response.ok) {
-        navigate(`/${customerId}/trip-list`);
+        if (response.ok) navigate(`/${customerId}/trip-list`);
       }
     } catch (error) {
       console.log("Submit Booking failled", error.message);
@@ -98,8 +116,8 @@ const ListingDetails = () => {
     <Loading />
   ) : (
     <MainLayout>
-      {/* <HouseInfo listing={listing}/> */}
       <div className="bg-gray-200 px-[10vw] pb-8">
+        <ToastContainer />
         <div className="flex justify-between pt-8">
           <h1 className="text-4xl font-bold text-blue-900">{listing.title}</h1>
           <button className="flex items-center gap-3 text-lg md:text-[1.3vw]">
@@ -117,13 +135,15 @@ const ListingDetails = () => {
             Save
           </button>
         </div>
-        <p className="flex gap-2 my-2 items-center text-blue-900"><MdLocationOn /> {listing.streetAddress}</p>
+        <p className="my-2 flex items-center gap-2 text-blue-900">
+          <MdLocationOn /> {listing.streetAddress}
+        </p>
         <div className="rounded-lg bg-white p-5">
           <div className="my-5 grid grid-cols-2 gap-4 md:grid-cols-3">
             {listing.listingPhotoPaths?.map((photo, index) => (
               <div key={`photo-${index}`} className="border shadow-lg">
                 <img
-                  src={`http://localhost:6789/${photo.replace("public", "")}`}
+                  src={`${API_URL}/${photo.replace("public", "")}`}
                   alt="home-image"
                   className="h-72 w-full object-cover"
                 />
@@ -144,7 +164,7 @@ const ListingDetails = () => {
             <img
               src={
                 listing?.creator?.profileImagePath?.includes("public")
-                  ? `http://localhost:6789/${listing?.creator?.profileImagePath.replace("public", "")}`
+                  ? `${API_URL}/${listing?.creator?.profileImagePath.replace("public", "")}`
                   : `${listing?.creator.profileImagePath}`
               }
               alt="profile"
@@ -157,7 +177,7 @@ const ListingDetails = () => {
           <hr className="rounded-lg border-[1.5px] border-gray-400" />
 
           <h3 className="pt-5 text-xl font-bold">Description</h3>
-          
+
           <p className="my-3">{listing.description}</p>
           <hr className="rounded-lg border-[1.5px] border-gray-400" />
 
@@ -200,7 +220,6 @@ const ListingDetails = () => {
                   ranges={dateRange}
                   onChange={handleSelect}
                   minDate={new Date()}
-                  // startDatePlaceholder
                   endDatePlaceholder="Check out"
                   disabledDates={bookedDates}
                 />
@@ -225,6 +244,42 @@ const ListingDetails = () => {
                 </button>
               </div>
             </div>
+          </div>
+
+          <div>
+            <h2 className="pt-5 text-2xl font-bold">Customer Reviews</h2>
+            {listing?.ratingCount === 0 ? (
+              <div className="my-3 ml-5 flex items-center gap-1 md:text-lg">
+                <TbMoodEmpty />{" "}
+                <p className="font-medium"> There are no reviews yet !</p>
+              </div>
+            ) : (
+              <div class="my-3 flex items-center">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <StarRoundedIcon
+                    fontSize="medium"
+                    style={{
+                      color:
+                        star <= Math.round(listing?.averageRating)
+                          ? "#ecc94b"
+                          : "#a0aec0",
+                    }}
+                  />
+                ))}
+                <p class="text-md ms-2 font-bold text-gray-900 dark:text-white">
+                  {Math.round(listing?.averageRating)} out of 5
+                </p>
+                <span class="mx-1.5 h-1 w-1 rounded-full bg-gray-500 dark:bg-gray-400"></span>
+                <span
+                  
+                  class="text-md font-medium text-gray-900 underline hover:no-underline dark:text-white"
+                >
+                  {listing?.ratingCount} reviews
+                </span>
+              </div>
+            )}
+
+            <RatingList rating={rating} />
           </div>
         </div>
       </div>

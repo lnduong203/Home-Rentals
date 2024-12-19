@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { API_URL } from "../../utils/constants";
 
 const ResetPassWord = () => {
   const [password, setPassWord] = useState("");
@@ -18,7 +19,7 @@ const ResetPassWord = () => {
     e.preventDefault();
     try {
       const response = await fetch(
-        `http://localhost:6789/user/verify?email=${email}&token=${token}`,
+        `${API_URL}/user/verify?email=${email}&token=${token}`,
         {
           method: "PATCH",
           headers: {
@@ -117,7 +118,6 @@ const ResetPassWord = () => {
           </div>
         </div>
       </div>
-
     </main>
   );
 };

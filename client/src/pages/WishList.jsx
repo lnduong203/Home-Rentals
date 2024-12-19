@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 
 import ListingCard from "../components/ListingCard";
 import MainLayout from "../layouts/MainLayout";
-// import Loading from "../components/Loading";
 
 const WishList = () => {
   const wishList = useSelector((state) => state.user.wishList);

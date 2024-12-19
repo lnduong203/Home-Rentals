@@ -2,6 +2,7 @@ import userRouter from "./user.js";
 import authRouter from "./auth.js";
 import listingRouter from "./listing.js";
 import bookingRouter from "./booking.js";
+import ratingRouter from "./rating.js";
 import dashboardRouter from "./dashboard.js";
 
 export default function router(app) {
@@ -9,6 +10,7 @@ export default function router(app) {
     app.use("/auth", authRouter);
     app.use("/properties", listingRouter);
     app.use("/bookings", bookingRouter);
+    app.use("/rating", ratingRouter);
     app.use("/dashboard", dashboardRouter);
     
 }

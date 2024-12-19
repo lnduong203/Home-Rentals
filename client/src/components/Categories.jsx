@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { categories } from "../data";
+import { categories } from "../utils/data";
 
 const Categories = () => {
   return (

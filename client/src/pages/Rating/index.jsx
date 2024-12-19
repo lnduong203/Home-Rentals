@@ -1,20 +1,33 @@
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import CopyrightIcon from "@mui/icons-material/Copyright";
 import StarOutlineRoundedIcon from "@mui/icons-material/StarOutlineRounded";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
-import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+
+import { API_URL } from "../../utils/constants";
 
 const Rating = () => {
-    // const { listingId } = useParams();
+  const navigate = useNavigate();
+  const { listingId } = useParams();
+  const customerId = useSelector((state) => state.user._id);
   const [ratingPoint, setRatingPoint] = useState(0);
   const [messageRating, setMessageRating] = useState("");
 
-  
-
-  
-  const handleRating = (rate) => {
+  const handleRating = async () => {
     try {
-        setRatingPoint(rate);
+      const response = await fetch(`${API_URL}/rating/${listingId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          customerId,
+          ratingPoint,
+          evaluate: messageRating,
+        }),
+      });
+      if (response.ok) navigate("/");
     } catch (error) {
       console.log("error", error.message);
     }
@@ -36,11 +49,17 @@ const Rating = () => {
               </span>
               <div class="flex cursor-pointer space-x-3">
                 {[1, 2, 3, 4, 5].map((star) => (
-                  <div key={star} onClick={() => handleRating(star)}>
+                  <div key={star} onClick={() => setRatingPoint(star)}>
                     {star <= ratingPoint ? (
-                      <StarRoundedIcon fontSize="large" style={{ color: "#ecc94b" }} />
+                      <StarRoundedIcon
+                        fontSize="large"
+                        style={{ color: "#ecc94b" }}
+                      />
                     ) : (
-                      <StarOutlineRoundedIcon fontSize="large" sx={{color:'#a0aec0'}}/>
+                      <StarOutlineRoundedIcon
+                        fontSize="large"
+                        sx={{ color: "#a0aec0" }}
+                      />
                     )}
                   </div>
                 ))}

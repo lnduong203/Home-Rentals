@@ -3,7 +3,7 @@ import Categories from "../components/Categories";
 import Listings from "../components/Listings";
 import Slide from "../components/Slide";
 
-import { slides } from "../data";
+import { slides } from "../utils/data";
 
 const HomePage = () => {
   return (

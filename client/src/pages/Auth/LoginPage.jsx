@@ -2,16 +2,20 @@ import { useState } from "react";
 import { login } from "../../redux/state";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+
 import { useGoogleLogin } from "@react-oauth/google";
 import FacebookLogin from "react-facebook-login";
+import { API_URL, FB_APP_ID } from "../../utils/constants";
+
+
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errLogin, setErrLogin] = useState(false);
+
+
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -65,7 +69,7 @@ const LoginPage = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:6789/auth/facebook-login",
+        `${API_URL}/auth/facebook-login`,
         {
           method: "POST",
           headers: {
@@ -100,7 +104,7 @@ const LoginPage = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:6789/auth/login", {
+      const response = await fetch( `${API_URL}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -250,7 +254,7 @@ const LoginPage = () => {
                 alt="login with facebook"
               />
               <FacebookLogin
-                appId={process.env.REACT_APP_FB_APP_ID}
+                appId={FB_APP_ID}
                 autoLoad={false}
                 fields="name,email,picture"
                 callback={handleResponeFacebook}

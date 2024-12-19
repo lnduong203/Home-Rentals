@@ -2,15 +2,14 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RemoveCircleOutline, AddCircleOutline } from "@mui/icons-material";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { useNavigate } from "react-router-dom"; 
 import { IoIosImages } from "react-icons/io";
 import { IoCloseSharp } from "react-icons/io5";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 import MainLayout from "../layouts/MainLayout";
-import { categories, types, facilities } from "../data";
-import { useNavigate } from "react-router-dom";
-const GOONGMAP_API_KEY = process.env.REACT_APP_GOONGMAP_API_KEY;
+import { categories, types, facilities } from "../utils/data";
+import { API_URL, GOONGMAP_API_KEY } from "../utils/constants";
 
 const CreateListing = ({ listingInfo }) => {
   const [photos, setPhotos] = useState(
@@ -90,8 +89,8 @@ const CreateListing = ({ listingInfo }) => {
 
         const response = await fetch(
           listingInfo
-            ? `http://localhost:6789/properties/${listingInfo._id}/update`
-            : "http://localhost:6789/properties/create",
+            ? `${API_URL}/properties/${listingInfo._id}/update`
+            : `${API_URL}/properties/create`,
           {
             method: `${listingInfo ? "PUT" : "POST"}`,
             body: listingForm,
@@ -518,7 +517,7 @@ const CreateListing = ({ listingInfo }) => {
                                     src={
                                       photo instanceof File
                                         ? URL.createObjectURL(photo)
-                                        : `http://localhost:6789/${photo?.replace("public", "")}`
+                                        : `${API_URL}/${photo?.replace("public", "")}`
                                     }
                                     alt="place"
                                     className="h-full w-full rounded-lg object-cover"

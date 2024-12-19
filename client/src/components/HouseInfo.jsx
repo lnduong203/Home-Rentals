@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { facilities } from "../data";
 import { FaRegHeart, FaHeart } from "react-icons/fa6";
+
+import { facilities } from "../utils/data";
+import { API_URL } from "../utils/constants";
 
 const HouseInfo = ({ listing }) => {
   const [isLiked, setIsLiked] = useState(false);
   return (
-    // <div className="bg-gray-200 px-[10vw] pb-8">
-    //  
     <>
-       <div className="flex justify-between py-8">
+      <div className="flex justify-between py-8">
         <h1 className="text-4xl font-bold text-blue-900">{listing?.title}</h1>
         <button className="flex items-center gap-3 text-lg md:text-[1.3vw]">
           {isLiked ? (
@@ -30,7 +30,7 @@ const HouseInfo = ({ listing }) => {
           {listing?.listingPhotoPaths?.map((photo, index) => (
             <div key={`photo-${index}`} className="border shadow-lg">
               <img
-                src={`http://localhost:6789/${photo.replace("public", "")}`}
+                src={`${API_URL}/${photo.replace("public", "")}`}
                 alt="home-image"
                 className="h-72 w-full object-cover"
               />
@@ -48,16 +48,15 @@ const HouseInfo = ({ listing }) => {
         </p>
         <hr className="rounded-lg border-[1.5px] border-gray-400" />
         <div className="flex items-center gap-4 py-3">
-          
           <img
-              src={
-                listing?.creator?.profileImagePath?.includes("public")
-                  ? `http://localhost:6789/${listing?.creator?.profileImagePath.replace("public", "")}`
-                  : `${listing?.creator?.profileImagePath}`
-              }
-              alt="profile"
-              className="h-14 w-14 rounded-full object-cover"
-            />
+            src={
+              listing?.creator?.profileImagePath?.includes("public")
+                ? `${API_URL}/${listing?.creator?.profileImagePath.replace("public", "")}`
+                : `${listing?.creator?.profileImagePath}`
+            }
+            alt="profile"
+            className="h-14 w-14 rounded-full object-cover"
+          />
           <h3 className="text-lg font-bold">
             Hosted by {listing?.creator?.firstName} {listing?.creator?.lastName}
           </h3>

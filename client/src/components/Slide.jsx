@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { API_URL } from "../utils/constants";
 
 const Slide = ({ slides, button }) => {
   const [current, setCurrent] = useState(0);
@@ -30,12 +31,9 @@ const Slide = ({ slides, button }) => {
             className="relative flex h-full w-full flex-shrink-0 justify-center"
           >
             <img
-              src={
-                slide.image ||
-                `http://localhost:6789/${slide.replace("public", "")}`
-              }
+              src={slide.image || `${API_URL}/${slide.replace("public", "")}`}
               alt={`slide-${index}`}
-              className={`object-cover h-full w-full ${slide.image ? "brightness-50" : "rounded-t-lg"}`}
+              className={`h-full w-full object-cover ${slide.image ? "brightness-50" : "rounded-t-lg"}`}
             />
             <h3 className="font-manrope absolute top-[30%] mt-5 w-5/6 bg-gradient-to-r from-rose-400 to-blue-500 bg-clip-text text-center text-[5vw] font-extrabold leading-snug text-transparent md:top-5">
               {slide.title || ""}

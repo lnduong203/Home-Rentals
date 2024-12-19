@@ -3,6 +3,7 @@ import HouseInfo from "../../components/HouseInfo";
 import MainLayout from "../../layouts/MainLayout";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import { API_URL } from "../../utils/constants";
 // import { useEffect } from "react";
 
 const PropertyDetails = () => {
@@ -13,12 +14,9 @@ const PropertyDetails = () => {
 
   const getListingDetails = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:6789/properties/${listingId}`,
-        {
-          method: "GET",
-        },
-      );
+      const response = await fetch(`${API_URL}/properties/${listingId}`, {
+        method: "GET",
+      });
       const data = await response.json();
       setListing(data);
     } catch (error) {
@@ -29,7 +27,7 @@ const PropertyDetails = () => {
   const handleDelete = async () => {
     try {
       const response = await fetch(
-        `http://localhost:6789/properties/${listingId}/delete`,
+        `${API_URL}/properties/${listingId}/delete`,
         { method: "DELETE" },
       );
       if (response.ok) {
