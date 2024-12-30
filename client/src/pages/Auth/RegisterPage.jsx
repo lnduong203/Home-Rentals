@@ -46,9 +46,7 @@ const RegisterPage = () => {
         body: registerFrom.toString(),
       });
 
-      if (response.ok) {
-        navigate("/login");
-      }
+      if (response.ok) navigate("/login");
     } catch (err) {
       console.log(err.message);
     }

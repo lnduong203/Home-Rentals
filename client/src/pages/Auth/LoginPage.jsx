@@ -119,7 +119,7 @@ const LoginPage = () => {
           login({
             user: loggedIn.user,
             token: loggedIn.token,
-          }),
+          }), 
         );
         navigate("/");
       } else {

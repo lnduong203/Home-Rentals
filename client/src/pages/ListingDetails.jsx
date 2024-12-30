@@ -15,6 +15,7 @@ import MainLayout from "../layouts/MainLayout";
 import { facilities } from "../utils/data";
 import { API_URL } from "../utils/constants";
 import RatingList from "./Rating/components/RatingList";
+import ListEmpty from "../components/ListEmpty";
 
 const ListingDetails = () => {
   const customerId = useSelector((state) => state?.user?._id);
@@ -249,10 +250,7 @@ const ListingDetails = () => {
           <div>
             <h2 className="pt-5 text-2xl font-bold">Customer Reviews</h2>
             {listing?.ratingCount === 0 ? (
-              <div className="my-3 ml-5 flex items-center gap-1 md:text-lg">
-                <TbMoodEmpty />{" "}
-                <p className="font-medium"> There are no reviews yet !</p>
-              </div>
+              <ListEmpty name="reviews" />
             ) : (
               <div class="my-3 flex items-center">
                 {[1, 2, 3, 4, 5].map((star) => (
@@ -270,10 +268,7 @@ const ListingDetails = () => {
                   {Math.round(listing?.averageRating)} out of 5
                 </p>
                 <span class="mx-1.5 h-1 w-1 rounded-full bg-gray-500 dark:bg-gray-400"></span>
-                <span
-                  
-                  class="text-md font-medium text-gray-900 underline hover:no-underline dark:text-white"
-                >
+                <span class="text-md font-medium text-gray-900 underline hover:no-underline dark:text-white">
                   {listing?.ratingCount} reviews
                 </span>
               </div>

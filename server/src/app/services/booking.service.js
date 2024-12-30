@@ -1,5 +1,9 @@
 import {Booking} from "../models/Booking.js";
 
+export const getAll = async () => {
+    return await Booking.find().populate("customerId listingId hostId", "-password");
+}
+
 export const create = async (data) => {
     const newBooking = new Booking(data);
     return await newBooking.save();

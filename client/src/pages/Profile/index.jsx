@@ -56,6 +56,9 @@ const ProfileSetting = () => {
     });
   };
 
+  console.log(formUser);
+  
+
   return (
     <MainLayout>
       <div className="flex w-full flex-col gap-5 bg-white px-3 text-[#161931] md:flex-row md:px-16 lg:px-28">

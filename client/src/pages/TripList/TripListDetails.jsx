@@ -6,7 +6,6 @@ import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
 import { DateRange } from "react-date-range";
 
-
 import Loading from "../../components/Loading";
 import MainLayout from "../../layouts/MainLayout";
 import { facilities } from "../../utils/data";
@@ -21,7 +20,7 @@ const TripListDetails = () => {
   const { tripId } = useParams();
   const navigate = useNavigate();
   const { openPopup } = useModalContext();
-  // const [isShowModal, setShowModal] = useState(false);
+
   const [isCheckin, setIsCheckin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [listing, setListing] = useState(null);
@@ -78,19 +77,19 @@ const TripListDetails = () => {
     }
   };
 
-  const handleCancelBooking = async () => {
+  const handleCancelBooking = async (cancel) => {
     try {
-      // const response = await fetch(
-      //   `${API_URL}/bookings/cancel-booking/${tripId}`,
-      //   {
-      //     method: "DELETE",
-      //   },
-      // );
-      // if (response.ok) navigate(`/${customerId}/trip-list`);
+      await fetch(`${API_URL}/bookings/cancel-booking/${tripId}`, {
+        method: "DELETE",
+      });
+
+      if (cancel) navigate(`/${customerId}/trip-list`);
+      else navigate(`/rating/${listing?._id}`);
     } catch (error) {
       console.log("Cancel booking failled", error.message);
     }
   };
+  
 
   return loading ? (
     <Loading />
@@ -204,11 +203,7 @@ const TripListDetails = () => {
                 </h2>
                 <p className="my-2">Start Date: {trip.startDate}</p>
                 <p>End Date: {trip.endDate}</p>
-                {isCheckin && (
-                  <p>
-                    Check in: {formatDate(new Date())}
-                  </p>
-                )}
+                {isCheckin && <p>Check in: {formatDate(new Date())}</p>}
               </div>
             </div>
           </div>
@@ -258,8 +253,8 @@ const TripListDetails = () => {
                       <div className="my-3 flex w-full justify-end gap-2">
                         <button
                           onClick={() => {
-                            handleCancelBooking();
-                            navigate(`/rating/${listing?._id}`);
+                            const cancel = false;
+                            handleCancelBooking(cancel);
                           }}
                           className="rounded border border-green-400 px-6 py-2 hover:bg-green-500 hover:text-white"
                         >
@@ -289,7 +284,10 @@ const TripListDetails = () => {
 
                       <div className="my-3 flex w-full justify-end gap-2">
                         <button
-                          onClick={handleCancelBooking}
+                          onClick={() => {
+                            const cancel = true;
+                            handleCancelBooking(cancel);
+                          }}
                           className="rounded border border-green-400 px-6 py-2 hover:bg-green-500 hover:text-white"
                         >
                           Agree

@@ -11,6 +11,17 @@ export const getUserByEmail = async (email) => {
     return await User.findOne({email});
 };
 
+export const filter = async ({q}) => {
+    let regex = q ? new RegExp(q, "i") : null;
+
+    const filter = {
+        ...(regex && {
+            $or: [{name: regex}, {email: regex}, {role: regex}],
+        }),
+    };
+    return await User.find(filter, "-password ");
+};
+
 export const update = async (currentUser, {firstName, lastName, email, profileImagePath, newPassword}) => {
     currentUser.firstName = firstName ? capitalizeFirstLetter(firstName) : currentUser.firstName;
     currentUser.lastName = lastName ? capitalizeFirstLetter(lastName) : currentUser.lastName;
@@ -23,6 +34,10 @@ export const update = async (currentUser, {firstName, lastName, email, profileIm
     }
 
     return await currentUser.save();
+};
+
+export const updateStatus = async (userId, {status}) => {
+    return await User.findByIdAndUpdate(userId, {isActive: status });
 };
 
 export const changePassword = async (user, currentPassword, newPassword) => {

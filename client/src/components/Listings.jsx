@@ -11,7 +11,7 @@ const Listings = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("All");
-  // const [showCard, setShowCard] = useState(false);
+  const [showMoreCard, setShowMoreCard] = useState(false);
 
   const listings = useSelector((state) => state.listings);
 
@@ -33,6 +33,13 @@ const Listings = () => {
     getFeedListings();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory]);
+
+  let listHome = [];
+  if (!showMoreCard) {
+    listHome = listings?.slice(0, 6);
+  } else {
+    listHome = listings;
+  }
 
   return (
     <div className="bg-gray-100 py-3">
@@ -57,10 +64,19 @@ const Listings = () => {
         <Loading />
       ) : (
         <div className="grid grid-cols-2 gap-4 px-[10vw] md:grid-cols-3">
-          {listings?.map((listing) => (
+          {listHome?.map((listing) => (
             <ListingCard key={listing._id} listing={listing} property={false} />
           ))}
         </div>
+      )}
+
+      {listHome.length >= 6 && (
+        <button
+          className="px-[10vw] font-medium text-blue-500 hover:underline"
+          onClick={() => setShowMoreCard(!showMoreCard)}
+        >
+          {showMoreCard ? "Show less" : "Show more"}...
+        </button>
       )}
     </div>
   );

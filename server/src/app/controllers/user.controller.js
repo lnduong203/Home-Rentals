@@ -3,7 +3,17 @@ import * as bookingService from "../services/booking.service.js";
 import * as listingService from "../services/listing.service.js";
 import {compareEmail, hashEmail, sendMail} from "../../utils/helpers/mail.helper.js";
 
-// import {APP_URL_API} from "../../configs/constants.js";
+
+
+export const filterUser = async (req, res) => {
+    try {
+        const users = await userService.filter(req.query);
+        res.status(200).json(users);
+    } catch (error) {
+        console.log("Failed to fetch users", error.message);
+        res.status(500).send("Failed to fetch users");
+    }
+};
 
 export const me = async (req, res) => {
     try {
@@ -20,12 +30,29 @@ export const updateProfile = async (req, res) => {
         const profileImagePath = req.file;
         if (profileImagePath) req.body.profileImagePath = profileImagePath.path;
 
+        console.log(profileImagePath);
+        
         const currentUser = await userService.getUserById(req.params.id);
         const updatedUser = await userService.update(currentUser, req.body);
         res.status(200).send(updatedUser);
     } catch (error) {
         console.log("Failed to update profile", error.message);
         res.status(500).send("Failed to update profile");
+    }
+};
+
+export const updateStatus = async (req, res) => {
+    try {
+        
+        const updatedUser = await userService.updateStatus(req.params.userId, req.query);
+        if (updatedUser) {
+            res.status(200).json({message: "User status updated successfully"});
+        } else {
+            res.status(404).json({message: "User not found"});
+        }
+    } catch (error) {
+        console.log("Failed to update user status", error.message);
+        res.status(500).send("Failed to update user status");
     }
 };
 

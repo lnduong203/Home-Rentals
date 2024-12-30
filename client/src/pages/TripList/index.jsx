@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { TbMoodEmpty } from "react-icons/tb";
 
 import Loading from "../../components/Loading";
 import MainLayout from "../../layouts/MainLayout";
 import ListingCard from "../../components/ListingCard";
 import { setTripList } from "../../redux/state";
 import { API_URL } from "../../utils/constants";
+import ListEmpty from "../../components/ListEmpty";
 
 const TripList = () => {
   const dispatch = useDispatch();
@@ -32,6 +34,7 @@ const TripList = () => {
 
   useEffect(() => {
     getTripList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   return loading ? (
@@ -43,8 +46,8 @@ const TripList = () => {
           Your Trip List
         </h2>
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-7">
-          {!tripList ? (
-            <p>You don't have any trip yet</p>
+          {!tripList.length ? (
+           <ListEmpty name="trip" />
           ) : (
             tripList?.map((trip) => (
               <ListingCard key={trip._id} tripList={trip} />

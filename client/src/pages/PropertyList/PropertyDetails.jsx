@@ -4,7 +4,6 @@ import MainLayout from "../../layouts/MainLayout";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { API_URL } from "../../utils/constants";
-// import { useEffect } from "react";
 
 const PropertyDetails = () => {
   const userId = useSelector((state) => state.user._id);

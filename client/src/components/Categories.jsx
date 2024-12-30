@@ -4,20 +4,17 @@ import { categories } from "../utils/data";
 const Categories = () => {
   return (
     <div className="mx-auto w-full max-w-7xl px-5 pt-8 md:px-10 md:py-20">
-      {/* Container */}
-
       <div className="flex flex-col items-center">
         <h2 className="text-center text-3xl font-bold text-blue-900 md:text-5xl">
           Explore Top Categories
         </h2>
-        <p className="px-6 my-8 text-center text-sm text-gray-500 sm:text-base md:mb-12 lg:mb-16">
+        <p className="my-8 px-6 text-center text-sm text-gray-500 sm:text-base md:mb-12 lg:mb-16">
           Lorem ipsum, dolor sit amet consectetur adipisicing elit. Repellendus
           iusto delectus non obcaecati aspernatur modi consequatur inventore,
           eum fugit magni perferendis deserunt neque asperiores optio voluptate
           et expedita qui alias. eum fugit magni perferendis deserunt neque
           asperiores optio voluptate et expedita qui alias.
         </p>
-        {/* Content */}
         <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-3 sm:justify-items-stretch md:mb-10 lg:mb-12 lg:gap-6">
           {categories?.slice(1, 7).map((category) => (
             <Link
