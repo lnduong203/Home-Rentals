@@ -1,6 +1,7 @@
 import {Router} from "express";
 // import multer from "multer";
 import * as authController from "../app/controllers/auth.controller.js";
+import { verifyToken } from "../app/middlewares/common/verify-token.js";
 
 const router = Router();
 

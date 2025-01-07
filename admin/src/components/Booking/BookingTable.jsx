@@ -1,14 +1,32 @@
 // import { useEffect } from "react";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Edit, Search, Trash2 } from "lucide-react";
+import { Eye, Search, Trash2 } from "lucide-react";
 import { API_URL } from "../../utils/constant";
+import { toast } from "react-toastify";
+import ModalLayout from "../common/ModalLayout";
+import ListingDetails from "../Listings/ListingDetails";
 
 const BookingTable = ({ bookings }) => {
-  
-  
   const [searchInput, setSearchInput] = useState("");
   const [filteredListing, setFilteredListing] = useState(bookings);
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [isDeleteModal, setIsDeleteModal] = useState(false);
+  const [isShowDetail, setIsShowDetail] = useState(false);
+
+  const handleDeleteBooking = async (id) => {
+    try {
+      const response = await fetch(`${API_URL}/bookings/${id}/delete`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        toast.success("Booking deleted successfully");
+        setFilteredListing((prev) => prev.filter((item) => item._id !== id));
+      }
+    } catch (error) {
+      console.log("Error:", error.message);
+    }
+  };
 
   useEffect(() => {
     let filteredData = bookings?.filter(
@@ -19,6 +37,7 @@ const BookingTable = ({ bookings }) => {
     setFilteredListing(filteredData);
   }, [searchInput, bookings]);
 
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -26,6 +45,25 @@ const BookingTable = ({ bookings }) => {
       transition={{ delay: 0.2 }}
       className="mb-8 rounded-lg border border-gray-700 bg-gray-800 bg-opacity-50 shadow-lg backdrop-blur-md"
     >
+      <ModalLayout
+        width={"w-4/5"}
+        isShow={isShowDetail}
+        onClose={() => setIsShowDetail(false)}
+        title="Booking Detail"
+      >
+        <ListingDetails listing={selectedBooking?.listingId} creator={selectedBooking?.hostId} />
+      </ModalLayout>
+
+      <ModalLayout
+        width="w-1/3"
+        onClose={() => setIsDeleteModal(false)}
+        isShow={isDeleteModal}
+        title="Do you want to delete this booking?"
+        onConfirm={() => {
+          handleDeleteBooking(selectedBooking?._id);
+          setIsDeleteModal(false);
+        }}
+      />
       <div className="flex items-center justify-between p-5">
         <h2 className="text-xl font-semibold text-gray-100">Booking List</h2>
         <div className="relative">
@@ -93,29 +131,37 @@ const BookingTable = ({ bookings }) => {
                   {item.listingId.title}
                 </td>
 
-                <td className="whitespace-nowrap px-4 py-3 text-sm  text-gray-100">
+                <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-100">
                   {item.listingId.category}
                 </td>
                 <td className="whitespace-nowrap px-4 py-3 text-sm font-medium text-gray-100">
-                  {item.hostId.name}
+                  {item.hostId.lastName} {item.hostId.firstName}
                 </td>
-                <td className="whitespace-nowrap px-4 py-3 text-sm  text-gray-100">
+                <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-100">
                   {item.startDate} to <p>{item.endDate}</p>
                 </td>
                 <td className="whitespace-nowrap px-4 py-3 text-sm font-medium text-gray-100">
                   $ {item.totalPrice.toFixed(2)}
                 </td>
-
-                <td className="px-4 py-3 text-sm text-gray-100">
+                <td className="py-3 pl-3 text-sm text-gray-100">
                   <button
-                    className="px-2 text-blue-400 hover:text-blue-500"
-                    title="Update"
+                    className="mx-2 text-blue-400 hover:text-blue-500"
+                    title="View"
+                    onClick={() => {
+                      setIsShowDetail(true);
+                      setSelectedBooking(item);
+                    }}
                   >
-                    <Edit size={18} />
+                    <Eye size={20} />
                   </button>
+
                   <button
                     className="text-red-400 hover:text-red-500"
                     title="Delete"
+                    onClick={() => {
+                      setSelectedBooking(item);
+                      setIsDeleteModal(true);
+                    }}
                   >
                     <Trash2 size={18} />
                   </button>

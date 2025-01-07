@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
 import { API_URL } from "../../utils/constant";
-import { formatDate } from "../../utils/handlers";
+import { formatDate, getToken } from "../../utils/handlers";
 import Toggle from "../common/Toggle";
 
+import { useNavigate } from "react-router-dom";
+
 const UpdateUser = ({ userInfo }) => {
+  const navigate = useNavigate();
   const [isChecked, setIsChecked] = useState(userInfo.isActive);
   const [updatedUserInfo, setUpdatedUserInfo] = useState({
     firstName: userInfo.firstName,
@@ -45,11 +48,21 @@ const UpdateUser = ({ userInfo }) => {
       console.log(`${key}: ${value}`);
     });
 
+     const token = getToken();
+        if (!token) {
+          toast.warning("Token has expired or does not exist");
+          navigate("/login");
+        }
+
     try {
       const response = await fetch(
         `${API_URL}/user/update-me/${userInfo._id}`,
         {
           method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           body: form,
         },
       );

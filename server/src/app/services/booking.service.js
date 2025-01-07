@@ -42,4 +42,7 @@ export const remove = async (id) => {
     return await Booking.findByIdAndDelete(id);
 }
 
+export const removeByListing = async (listingId) => {
+    return await Booking.deleteMany({listingId});
+}
 

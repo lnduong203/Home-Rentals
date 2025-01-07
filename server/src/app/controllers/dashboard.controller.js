@@ -59,7 +59,7 @@ export const users = async (req, res) => {
 export const bookings = async (req, res) => {
     try {
         const bookings = await bookingService.getAll();
-        const bookingTypeStatistics = await getTypeStatistics(bookings);
+        const bookingTypeStatistics =  getTypeStatistics(bookings);
         const bookingLastWeek = await getBookingsLastWeek(bookings);
 
         res.status(200).json({bookings, bookingTypeStatistics, bookingLastWeek});

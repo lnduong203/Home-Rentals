@@ -3,9 +3,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Menu } from "lucide-react";
 import { SIDE_BAR_ITEMS } from "../utils/data";
 import { Link } from "react-router-dom";
+import { API_URL } from "../utils/constant";
 
 const SideBar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const user = JSON.parse(localStorage.getItem("user"));
+
   return (
     <motion.div
       className={`realative z-10 flex-shrink-0 transition-all duration-300 ease-in-out ${isSidebarOpen ? "w-64" : "w-20"} `}
@@ -24,10 +27,16 @@ const SideBar = () => {
             <Menu size={24} />
           </motion.button>
           <motion.div className="flex items-center gap-2">
-            <p className={`${isSidebarOpen ? "" : "hidden"}`}>Hi, Duong</p>
+            <p className={`${isSidebarOpen ? "" : "hidden"}`}>
+              Hi, {user.lastName}
+            </p>
             <img
               className="h-12 w-12 rounded-full border-2 border-green-500 object-cover"
-              src="https://cdn.vinaenter.edu.vn/wp-content/uploads/2024/08/hinh-anh-dep-3d-ngau-1.jpg"
+              src={
+                user.profileImagePath.includes("public")
+                  ? `${API_URL}/${user.profileImagePath.replace("public", "")}`
+                  : user.profileImagePath
+              }
               alt="avatar"
             />
           </motion.div>

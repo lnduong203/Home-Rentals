@@ -12,8 +12,16 @@ const LogoutPage = () => {
         width="w-[30%]"
         title="Do you want to logout?"
         isShow={isShow}
-        onClose={() => setIsShow(false)}
-        onConfirm={() => navigate("/login")}
+        onClose={() => {
+            setIsShow(false)
+            navigate('/')
+        }}
+        onConfirm={() => {
+          localStorage.removeItem("token");
+          localStorage.removeItem("tokenExpiry");
+          localStorage.removeItem("user");
+          navigate("/login");
+        }}
       />
     </div>
   );

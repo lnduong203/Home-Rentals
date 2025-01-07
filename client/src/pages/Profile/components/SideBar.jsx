@@ -21,18 +21,6 @@ const SideBar = () => {
           >
             Change Password
           </Link>
-          <a
-            href="/"
-            className="flex items-center px-3 py-2.5 font-semibold  hover:text-indigo-900"
-          >
-            Notifications
-          </a>
-          <a
-            href="/"
-            className="flex items-center px-3 py-2.5 font-semibold  hover:text-indigo-900"
-          >
-            PRO Account
-          </a>
         </div>
       </aside>
     </>

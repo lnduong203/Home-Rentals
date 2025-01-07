@@ -17,7 +17,6 @@ import ForgotPassWord from "./pages/Auth/ForgotPassWord";
 import ResetPassWord from "./pages/Auth/ResetPassword";
 import ChangePassword from "./pages/Profile/ChangePassword";
 import TripListDetails from "./pages/TripList/TripListDetails";
-import Payment from "./components/Payment";
 import PropertyDetails from "./pages/PropertyList/PropertyDetails";
 import ListingUpdate from "./pages/Listing/ListingUpdate";
 import Rating from "./pages/Rating";
@@ -52,9 +51,6 @@ function App() {
           <Route path="/property-details/:listingId" element={<PropertyDetails />} />
 
           <Route path="/rating/:listingId" element={<Rating />} />
-
-
-          <Route path="/payment" element={<Payment />} />
 
           <Route path="*" element={<ErrorPage />} />
         </Routes>

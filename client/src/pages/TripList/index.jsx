@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { TbMoodEmpty } from "react-icons/tb";
 
 import Loading from "../../components/Loading";
 import MainLayout from "../../layouts/MainLayout";
@@ -33,7 +32,7 @@ const TripList = () => {
   };
 
   useEffect(() => {
-    getTripList();
+    if(userId) getTripList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 

@@ -2,12 +2,16 @@ import { User } from "lucide-react";
 
 import SettingSection from "./SettingSection";
 import { useState } from "react";
+import { API_URL } from "../../utils/constant";
+import { ToastContainer, toast } from 'react-toastify';
 
 const Profile = () => {
+  const user = JSON.parse(localStorage.getItem("user"));
+
   const [formInfo, setFormInfo] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
   });
 
   const handleChange = (e) => {
@@ -18,16 +22,38 @@ const Profile = () => {
     });
   };
 
-  const handleSubmit = () => {
-  //  alert(fo rmInfo.email);
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch(`${API_URL}/user/update-me/${user._id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formInfo),
+      })
+
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem("user", JSON.stringify(data));
+        toast.success("Profile updated successfully");
+      }
+    } catch (error) {
+      console.error("Error updating profile", error);
+      
+    }
   };
 
   return (
     <SettingSection icon={User} title="Profile">
+      <ToastContainer />
       <div className="flex">
         <div>
           <img
-            src="https://kenh14cdn.com/2020/7/17/brvn-15950048783381206275371.jpg"
+            src={
+              user.profileImagePath.includes("public")
+                ? `${API_URL}/${user.profileImagePath.replace("public", "")}`
+                : user.profileImagePath
+            }
             alt="avatar"
             className="mr-10 mt-8 h-24 w-24 rounded-lg border object-cover"
           />

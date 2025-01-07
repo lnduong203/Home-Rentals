@@ -1,4 +1,5 @@
 const SearchNotFound = ({ searchValue, col }) => {
+  if (searchValue === "") return null;
   return (
     <tbody>
       <tr>

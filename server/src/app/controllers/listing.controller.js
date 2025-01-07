@@ -1,6 +1,7 @@
-// import { User } from "../models/User.js";
+
 import {Listing} from "../models/Listing.js";
 import * as listingService from "../services/listing.service.js";
+import * as bookingService from "../services/booking.service.js";
 
 export const filterListings = async (req, res) => {
     try {
@@ -31,8 +32,6 @@ export const createListing = async (req, res) => {
 export const updateListing = async (req, res) => {
     try {
         const listingPhotos = req.files;
-        // console.log('listingPhotos:', listingPhotos);
-
         const data = req.body;
         if (listingPhotos) {
             const newListingPhotos = listingPhotos.map((file) => file.path);
@@ -59,10 +58,21 @@ export const listingDetails = async (req, res) => {
 
 export const deleteListing = async (req, res) => {
     try {
+        const bookings = await bookingService.removeByListing(req.params.id);
         const listing = await listingService.remove(req.params.id);
-        if (listing) return res.status(200).send({message: "Listing deleted successfully"});
+        if (listing && bookings) return res.status(200).send({message: "Listing deleted successfully"});
         else return res.status(400).send({message: "Listing not found"});
     } catch (error) {
         res.status(400).send({message: "Failed to delete listing", error: error.message});
     }
 };
+
+export const updateStatus = async (req, res) => {
+    try {
+        const listing = await listingService.status(req.params.id, req.query);
+        if (listing) return res.status(200).send({message: "Listing blocked successfully"});
+        else return res.status(400).send({message: "Listing not found"});
+    } catch (error) {
+        res.status(400).send({message: "Failed to block listing", error: error.message});
+    }
+}

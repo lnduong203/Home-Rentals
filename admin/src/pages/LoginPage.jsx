@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { LockKeyhole } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 import { API_URL } from "../utils/constant";
 
@@ -12,7 +13,7 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch( `${API_URL}/auth/login`, {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -21,11 +22,23 @@ const LoginPage = () => {
       });
 
       const loggedIn = await response.json();
-
+      
       if (loggedIn && response.ok) {
-        console.log("Logged in", loggedIn);
-        navigate("/");
+        if (loggedIn.user.role !== "admin") {
+          toast.error("You don't have permission to access");
+        } else {
+          
+          // Lưu trữ token cùng với thời gian hết hạn
+          const expiresIn = 7 * 24 * 60 * 60 * 1000; // 7 ngày
+          // const expiresIn = 1 * 60 * 1000; // 1p
+          const expiryTime = new Date().getTime() + expiresIn;
+          localStorage.setItem("token", loggedIn.token);
+          localStorage.setItem("tokenExpiry", expiryTime);
+          localStorage.setItem("user", JSON.stringify(loggedIn.user));
+          navigate("/");
+        }
       } else {
+        toast.error("Email or password is incorrect");
         console.error("Invalid login");
       }
     } catch (error) {
@@ -35,6 +48,7 @@ const LoginPage = () => {
 
   return (
     <div className="flex w-full flex-col items-center justify-center">
+      <ToastContainer />
       <div className="rounded-lg border border-gray-700 bg-gray-800 bg-opacity-50 p-8 shadow-lg backdrop-blur-md">
         <div className="text-center">
           <div className="flex items-center justify-center">
@@ -103,7 +117,7 @@ const LoginPage = () => {
               <div className="mb-2 w-full px-3 md:w-full">
                 <button
                   type="submit"
-                  className="block w-full appearance-none rounded-lg border border-gray-200 bg-blue-600 px-3 py-3 font-bold leading-tight text-gray-100 hover:bg-blue-500 focus:border-gray-500 focus:bg-white focus:outline-none"
+                  className="block w-full appearance-none rounded-lg border border-gray-200 bg-blue-600 px-3 py-3 font-bold leading-tight text-gray-100 hover:bg-blue-500 focus:border-gray-500  focus:outline-none"
                 >
                   Sign in
                 </button>

@@ -7,8 +7,11 @@ import StatCard from "../components/common/StatCard";
 import UserTable from "../components/Users/UserTable";
 import { API_URL } from "../utils/constant";
 import LineChartComponent from "../components/common/LineChartComponent";
+import { getToken } from "../utils/handlers";
+import { useNavigate } from "react-router-dom";
 
 const UserPage = () => {
+  const navigate = useNavigate();
   const [userData, setUserData] = useState([
     {
       totalUsers: 0,
@@ -19,9 +22,18 @@ const UserPage = () => {
   const [users, setUsers] = useState([]);
   const [userGrowth, setUserGrowth] = useState([]);
   const getUsers = async () => {
+    const token = getToken();
+        if (!token) {
+          toast.warning("Token has expired or does not exist");
+          navigate("/login");
+        }
     try {
       const response = await fetch(`${API_URL}/dashboard/users`, {
         method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
       if (response.ok) {
         const data = await response.json();

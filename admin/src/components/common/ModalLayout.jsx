@@ -18,7 +18,7 @@ const ModalLayout = ({
         initial={{ opacity: 0, y: -200 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className={`${width} max-h-[95vh] rounded-lg bg-white p-5 shadow-lg overflow-y-auto`}
+        className={`${width} max-h-[95vh] overflow-y-auto rounded-lg bg-white p-5 shadow-lg`}
       >
         {!children ? (
           <div className="flex flex-col gap-4">
@@ -41,9 +41,9 @@ const ModalLayout = ({
             </div>
           </div>
         ) : (
-          <div className="px-10 py-2 ">
-            <div className=" mb-4 flex items-center justify-between border-b border-gray-300 pb-2">
-              <p className="text-[1.8vw] text-indigo-800 font-bold">{title}</p>
+          <div className="px-10 py-2">
+            <div className="mb-4 flex items-center justify-between border-b border-gray-300 pb-2">
+              <p className="text-[1.8vw] font-bold text-indigo-800">{title}</p>
               <button
                 onClick={onClose}
                 className="rounded-full p-2 text-red-500 hover:bg-gray-200 hover:text-red-700"
@@ -51,7 +51,6 @@ const ModalLayout = ({
                 <X />
               </button>
             </div>
-
             {children}
           </div>
         )}

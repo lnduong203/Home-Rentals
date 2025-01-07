@@ -79,6 +79,11 @@ const ListingSchema = new mongoose.Schema(
             type: Number,
             required: true,
         },
+        status: {
+            type: String,
+            default: "active",
+            enum: ["active", "inactive"],
+        },
         ratingCount: {
             type: Number,
             default: 0,

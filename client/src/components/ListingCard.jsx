@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaMapMarkerAlt, FaCalendarAlt } from "react-icons/fa";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
-import { FaRegHeart, FaHeart } from "react-icons/fa6";
+import { FaRegHeart, FaHeart,FaArrowRight } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -127,7 +127,7 @@ const ListingCard = ({ listing, tripList, property }) => {
           </div>
         </Link>
         {property && (
-          <Link to={`/property-details/${listing._id}`}> propery detail</Link>
+          <Link  className='flex items-center gap-x-1 text-sm  text-gray-400 opacity-80 -mt-4 justify-end w-full px-4 py-2 hover:opacity-100 hover:text-rose-400' to={`/property-details/${listing._id}`}>Details<FaArrowRight className="text-xs"/> </Link>
         )}
       </div>
     </div>

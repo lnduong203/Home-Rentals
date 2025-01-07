@@ -7,20 +7,32 @@ import SearchNotFound from "../common/SearchNotFound";
 import ModalLayout from "../common/ModalLayout";
 
 import UpdateUser from "./UpdateUser";
+import { toast } from "react-toastify";
 
 const UserTable = ({ users }) => {
+  const me = JSON.parse(localStorage.getItem("user"));
 
-  
   const [searchInput, setSearchInput] = useState("");
   const [filteredUser, setFilteredUser] = useState(users);
   const [isDeleteModal, setIsDeleteModal] = useState(false);
   const [isUpdateModal, setIsUpdateModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
- 
-  
-  
-  
+  const handleDeleUser = async (id) => {
+    try {
+      const response = await fetch(`${API_URL}/users/${id}/delete`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        toast.success("User deleted successfully");
+        setFilteredUser((prev) => prev.filter((item) => item._id !== id));
+      }
+    } catch (error) {
+      console.log("Error:", error.message);
+    }
+  };
+
   useEffect(() => {
     let filteredData = users?.filter(
       (user) =>
@@ -45,7 +57,7 @@ const UserTable = ({ users }) => {
         onClose={() => setIsDeleteModal(false)}
         onConfirm={() => {
           setIsDeleteModal(false);
-          alert("delete");
+          handleDeleUser(selectedUser?._id);
         }}
       />
 
@@ -83,12 +95,12 @@ const UserTable = ({ users }) => {
             <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
               Status
             </th>
-            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+            <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500">
               Actions
             </th>
           </thead>
 
-          {(filteredUser?.length === 0 && searchInput !== '') ? (
+          {filteredUser?.length === 0 && searchInput !== "" ? (
             <SearchNotFound searchValue={searchInput} col={6} />
           ) : (
             <tbody>
@@ -98,7 +110,7 @@ const UserTable = ({ users }) => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.2 }}
-                  className="border-t border-gray-700 hover:bg-gray-800"
+                  className={`${user._id === me._id ? "bg-gray-500" : ""} "border-t hover:bg-gray-800" border-gray-700`}
                 >
                   <ModalLayout
                     width={"w-2/3"}
@@ -111,9 +123,7 @@ const UserTable = ({ users }) => {
                   <td className="w-2 px-4 py-3 text-sm text-gray-100">
                     {index + 1}
                   </td>
-                  <td             
-                    className="flex cursor-pointer items-center gap-2 overflow-hidden whitespace-nowrap px-4 py-3 text-sm font-medium text-gray-100"
-                  >
+                  <td className="flex cursor-pointer items-center gap-2 overflow-hidden whitespace-nowrap px-4 py-3 text-sm font-medium text-gray-100">
                     <img
                       src={
                         user?.profileImagePath.includes("public")
@@ -138,7 +148,7 @@ const UserTable = ({ users }) => {
                     {user.isActive ? "Active" : "Inactive"}
                   </td>
 
-                  <td className="px-4 py-3 text-sm text-gray-100">
+                  <td className="px-4 py-3 text-center text-sm text-gray-100">
                     <button
                       className="px-2 text-blue-400 hover:text-blue-500"
                       title="Update"
@@ -150,9 +160,12 @@ const UserTable = ({ users }) => {
                       <Edit size={18} />
                     </button>
                     <button
-                      className="text-red-400 hover:text-red-500"
+                      className={`${user._id === me._id ? "hidden" : ""} text-red-400 hover:text-red-500`}
                       title="Delete"
-                      onClick={() => setIsDeleteModal(true)}
+                      onClick={() => {
+                        setSelectedUser(user);
+                        setIsDeleteModal(true);
+                      }}
                     >
                       <Trash2 size={18} />
                     </button>

@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import { Home, PlaneTakeoff, Users } from "lucide-react";
 
@@ -6,8 +8,8 @@ import Header from "../components/common/Header";
 import StatCard from "../components/common/StatCard";
 import CategoryOverviewChart from "../components/Overview/CategoryOverviewChart";
 import LineChartComponent from "../components/common/LineChartComponent";
-import { useState, useEffect } from "react";
-import ModalLayout from "../components/common/ModalLayout";
+import { getToken } from "../utils/handlers";
+import { useNavigate } from "react-router-dom";
 
 const OverviewPage = () => {
   const [data, setData] = useState({
@@ -15,14 +17,31 @@ const OverviewPage = () => {
     totalBooking: 0,
     totalListing: 0,
   });
+  const navigate = useNavigate();
   const [categoryData, setCategoryData] = useState([]);
   const [bookingData, setBookingData] = useState([]);
 
+ 
+
   const getDataOverview = async () => {
+    
+    const token = getToken();
+    // if (!token) {
+    //   toast.warning("Token has expired or does not exist");
+    //   navigate("/login");
+    // }
+
     try {
-      const response = await fetch(`${API_URL}/dashboard/`, {
-        method: "GET",
-      });
+      const response = await fetch(
+        `${API_URL}/dashboard?email=ngocduongxk2003@gmail.com`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
       if (response.ok) {
         const data = await response.json();
         setData(data);
@@ -68,7 +87,7 @@ const OverviewPage = () => {
           />
         </motion.div>
 
-        <div className="grid grid-cols-1 gap-6 ">
+        <div className="grid grid-cols-1 gap-6">
           <LineChartComponent
             data={bookingData}
             first_line="Booking"
@@ -76,8 +95,10 @@ const OverviewPage = () => {
             title="Booking Overview"
             className="h-80"
           />
-          <CategoryOverviewChart title='Category Overview' data={categoryData} />
-         
+          <CategoryOverviewChart
+            title="Category Overview"
+            data={categoryData}
+          />
         </div>
       </main>
     </div>

@@ -1,13 +1,47 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaRegHeart, FaHeart } from "react-icons/fa6";
+import { ToastContainer, toast } from "react-toastify";
 
 import { facilities } from "../utils/data";
 import { API_URL } from "../utils/constants";
+import ToggleButton from "./ToggleButton";
 
-const HouseInfo = ({ listing }) => {
+const HouseInfo = ({ listing = {} }) => {
   const [isLiked, setIsLiked] = useState(false);
+  const [showHideHouse, setShowHideHouse] = useState(
+    listing?.status === "active",
+  );
+ 
+
+  // Đồng bộ hóa state khi listing thay đổi
+  useEffect(() => {
+    setShowHideHouse(listing?.status === "active");
+  }, [listing, listing?.status]);
+
+  const handleHideShowListing = async () => {
+    try {
+      const newStatus = !showHideHouse;
+      const response = await fetch(
+        `${API_URL}/properties/${listing._id}/update-status?status=${
+          newStatus ? "active" : "inactive"
+        }`,
+        { method: "PATCH" },
+      );
+
+      if (response.ok) {
+        toast.success(`Listing is ${newStatus ? "show" : "hide"} successfully`);
+        setShowHideHouse(newStatus);
+      } else {
+        console.log("Failed to update listing status.");
+      }
+    } catch (error) {
+      console.log("Error:", error.message);
+    }
+  };
+
   return (
     <>
+      <ToastContainer />
       <div className="flex justify-between py-8">
         <h1 className="text-4xl font-bold text-blue-900">{listing?.title}</h1>
         <button className="flex items-center gap-3 text-lg md:text-[1.3vw]">
@@ -88,9 +122,20 @@ const HouseInfo = ({ listing }) => {
               ))}
             </div>
           </div>
+          <div>
+            <h2 className="mb-2 pt-5 text-2xl font-bold">House Status</h2>
+            <div>
+              <ToggleButton
+                title={`Do you want to ${listing?.status === "active" ? "hide" : "show"} this room?`}
+                onClick={handleHideShowListing}
+                isShowHide={showHideHouse}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </>
   );
 };
+
 export default HouseInfo;

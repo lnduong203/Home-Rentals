@@ -113,9 +113,9 @@ export const getBookingsLastWeek = async (bookings) => {
     }
 
     bookings
-        .filter(b => new Date(b.startDate) >= weekAgo && new Date(b.startDate) <= now)
+        .filter(b => new Date(b.createdAt) >= weekAgo && new Date(b.createdAt) <= now)
         .forEach(booking => {
-            const bookingDate = new Date(booking.startDate);
+            const bookingDate = new Date(booking.createdAt);
             const index = Math.floor((bookingDate - weekAgo) / (1000 * 60 * 60 * 24));
             if (dailyStats[index]) {
                 dailyStats[index].Booking += 1;

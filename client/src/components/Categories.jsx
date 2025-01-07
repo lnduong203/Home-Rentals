@@ -19,7 +19,7 @@ const Categories = () => {
           {categories?.slice(1, 7).map((category) => (
             <Link
               key={category.label}
-              to="/"
+              to={`/properties/search/${category.label}`}
               className="flex flex-col gap-4 rounded-md px-4 py-8 md:p-0"
             >
               <div className="relative h-60 scale-100 rounded-md object-cover duration-300 hover:scale-105">

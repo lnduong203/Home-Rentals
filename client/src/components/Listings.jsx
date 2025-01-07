@@ -18,7 +18,7 @@ const Listings = () => {
   const getFeedListings = async () => {
     try {
       const response = await fetch(
-        `${API_URL}/properties/?q=${selectedCategory === "All" ? "" : `${selectedCategory}`}`,
+        `${API_URL}/properties/?q=${selectedCategory === "All" ? "" : `${selectedCategory}&status=active`}`,
         { method: "GET" },
       );
 
@@ -34,13 +34,9 @@ const Listings = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory]);
 
-  let listHome = [];
-  if (!showMoreCard) {
-    listHome = listings?.slice(0, 6);
-  } else {
-    listHome = listings;
-  }
-
+  let listHome = listings || [];
+  if (!showMoreCard) listHome = listings?.slice(0, 6);
+  
   return (
     <div className="bg-gray-100 py-3">
       <div className="my-[1vw] grid grid-cols-5 gap-2 px-[10vw] md:my-[1.5vw] md:grid-cols-8 md:gap-4">

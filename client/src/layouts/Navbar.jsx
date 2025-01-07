@@ -5,7 +5,6 @@ import {
   FaPlane,
   FaHeart,
   FaHome,
-  FaClipboardList,
   FaUserPlus,
   FaUser,
   FaSignOutAlt,
@@ -16,7 +15,6 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { logout } from "../redux/state";
 import { API_URL } from "../utils/constants";
-// import noImage from "../assets/no-avatar.png";
 
 const Navbar = () => {
   const [dropDownMenu, setDropDownMenu] = useState(false);
@@ -66,9 +64,9 @@ const Navbar = () => {
       {/* Login */}
       <div className="flex-initial">
         <div className="relative flex items-center justify-end">
-          <div className="mr-4 text-white font-bold flex items-center">
+          <div className="mr-4 text-white font-medium flex items-center">
             <Link
-              className="inline-block rounded-full px-3 py-2 hover:bg-gray-600"
+              className="inline-block rounded-full px-3 py-2 hover:bg-gray-200 hover:opacity-70 hover:text-rose-500"
               to={user ? "/create-listing" : "/login"}
             >
               Become a host
@@ -134,12 +132,6 @@ const Navbar = () => {
                     to={`/${user._id}/property-list`}
                   >
                     <FaHome /> Property List
-                  </Link>
-                  <Link
-                    className="ml-2 flex items-center gap-x-2 pb-2 hover:text-rose-500"
-                    to={`/${user._id}/reservation-list`}
-                  >
-                    <FaClipboardList /> Reservation List
                   </Link>
                   <Link
                     className="ml-2 flex items-center gap-x-2 pb-2 hover:text-rose-500"

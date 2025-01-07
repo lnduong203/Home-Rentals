@@ -33,7 +33,7 @@ const PropertyList = () => {
 
   useEffect(() => {
     getPropertyList();
-  }, []);
+  }, [userId]);
 
   return loading ? (
     <Loading />

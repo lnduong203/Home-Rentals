@@ -3,7 +3,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { FaRegHeart, FaHeart } from "react-icons/fa6";
 import { MdLocationOn } from "react-icons/md";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
-import { TbMoodEmpty } from "react-icons/tb";
 import { toast, ToastContainer } from "react-toastify";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
@@ -79,39 +78,41 @@ const ListingDetails = () => {
     }
   };
 
+  const handleSubmit = async (e) => {
+    try {
+      if (customerId) {
+        const bookingForm = {
+          customerId,
+          listingId,
+          hostId: listing.creator._id,
+          startDate: dateRange[0].startDate.toDateString(),
+          endDate: dateRange[0].endDate.toDateString(),
+          totalPrice: listing.price * countDay,
+        };
+        // if (customerId === listing.creator._id) {
+        //   toast.error("You can't booking your own home");
+        // } else {
+          const response = await fetch(`${API_URL}/bookings/create`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(bookingForm),
+          });
+
+          if (response.ok) navigate(`/${customerId}/trip-list`);
+        
+      } else toast.error("Please login to booking this home");
+    } catch (error) {
+      console.log("Submit Booking failled", error.message);
+    }
+  };
+
   useEffect(() => {
     getListingDetails();
     getRating();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listingId]);
-
-  const handleSubmit = async (e) => {
-    try {
-      const bookingForm = {
-        customerId,
-        listingId,
-        hostId: listing.creator._id,
-        startDate: dateRange[0].startDate.toDateString(),
-        endDate: dateRange[0].endDate.toDateString(),
-        totalPrice: listing.price * countDay,
-      };
-      if (customerId === listing.creator._id) {
-        toast.error("You can't booking your own home");
-      } else {
-        const response = await fetch(`${API_URL}/bookings/create`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(bookingForm),
-        });
-
-        if (response.ok) navigate(`/${customerId}/trip-list`);
-      }
-    } catch (error) {
-      console.log("Submit Booking failled", error.message);
-    }
-  };
 
   return loading ? (
     <Loading />
