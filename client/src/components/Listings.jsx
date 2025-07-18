@@ -66,7 +66,7 @@ const Listings = () => {
         </div>
       )}
 
-      {listHome.length >= 6 && (
+      {listHome?.length || 1 >= 6 && (
         <button
           className="px-[10vw] font-medium text-blue-500 hover:underline"
           onClick={() => setShowMoreCard(!showMoreCard)}
